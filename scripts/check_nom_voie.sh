@@ -14,7 +14,8 @@ psql -P pager -c "select left(code_insee,2) as dept, count(*) as nb_nom_vide, su
 sql2csv --db "$DB" -H --query "select code_insee,id,'nom_voie+nom_ld','','nom_voie et nom_ld vide' from ban_temp where nom_voie='' and nom_ld=''" >> erreurs.csv
 
 echo "\n-- nom_voie contient nom_ld\n"
-sql2csv --db "$DB" -H --query "select b.code_insee, b.id, 'nom_voie+nom_ld',b.nom_voie,'nom_voie contient nom_ld' from ban_temp b join ban_temp c on (c.id=b.id) where b.nom_voie !='' and c.nom_ld !='' and lower(unaccent(b.nom_voie)) like '%' || lower(unaccent(c.nom_ld)) || '%'" >> erreurs.csv
+psql -c "\copy (select b.code_insee, b.id, 'nom_voie+nom_ld',b.nom_voie,'nom_voie contient nom_ld' from ban_temp b join ban_temp c on (c.id=b.id) where b.nom_voie !='' and c.nom_ld !='' and lower(unaccent(b.nom_voie)) like '%' || lower(unaccent(c.nom_ld)) || '%') to temp with (format csv, header false)"
+cat temp >> erreurs.csv
 
 
 echo "\n-- nombre de nom_voie avec '/' (regroupés par département)\n"
@@ -26,7 +27,7 @@ psql -P pager -c "select left(code_insee,2) as dept, count(*) as nb_total, sum(r
 sql2csv --db "$DB" -H --query "select code_insee,id,'nom_voie',nom_voie,'nom_voie contient / avec valeurs repetees' from ban_temp where nom_voie ~ '^(.*)/\1$' " >> erreurs.csv
 
 echo "\n-- nombre de nom_voie différents avec id_fantoir identique (regroupés par département)\n"
-psql -P pager -c "select left(code_insee,2) as dept, count(*) as nb, min(noms) as exemple from (select code_insee, id_fantoir, count(*) as nb_noms, sum(nb) as nb_adresses, left(string_agg(nom,' + '),100) as noms from (select code_insee, id_fantoir, format('"%s,%s"',nom_voie,nom_ld) as nom, count(*) as nb from ban_temp where id_fantoir !='' group by 1,2,3) as f group by 1,2) as f2 where nb_noms>1 group by 1 order by 1;"
+psql -P pager -c "select left(code_insee,2) as dept, count(*) as nb, min(noms) as exemple from (select code_insee, id_fantoir, count(*) as nb_noms, sum(nb) as nb_adresses, left(string_agg(nom,' + '),100) as noms from (select code_insee, id_fantoir, format('%s;%s',nom_voie,nom_ld) as nom, count(*) as nb from ban_temp where id_fantoir !='' group by 1,2,3) as f group by 1,2) as f2 where nb_noms>1 group by 1 order by 1;"
 
 echo "\n-- exemples de nom_voie différents avec id_fantoir identique\n"
 psql -P pager -c "select code_insee, id_fantoir, count(*) as nb_noms, sum(nb) as nb_adresses, left(string_agg(nom,' + '),100) as noms from (select code_insee, id_fantoir, format('"%s,%s"',nom_voie,nom_ld) as nom, count(*) as nb from ban_temp where id_fantoir !='' group by 1,2,3) as f group by 1,2 order by 3 desc limit 50;"
@@ -61,19 +62,19 @@ select length(nom_voie) as longueur, nom_voie, code_insee, id_fantoir from ban_t
 
 echo "\n-- noms comportant des parenthèses\n"
 psql -P pager -c "
-select nom_voie, left(string_agg(code_insee,','),60) as exemple from ban_temp where nom_voie ~ '\(' or nom_voie ~ '\)' group by 1 order by 1;
+select nom_voie, left(string_agg(distinct(code_insee),','),60) as exemple from ban_temp where nom_voie ~ '\(' or nom_voie ~ '\)' group by 1 order by 1;
 "
 sql2csv --db "$DB" -H --query "select code_insee,id,'nom_voie',nom_voie,'nom comportant des parentheses' from ban_temp where nom_voie ~ '\(' or nom_voie ~ '\)' " >> erreurs.csv
 
 echo "\n-- noms comportant des tirets\n"
 psql -P pager -c "
-select nom_voie, left(string_agg(code_insee,','),60) as exemple from ban_temp where nom_voie ~ ' -' or nom_voie ~ '- ' or nom_voie ~ '--' group by 1 order by 1;
+select nom_voie, left(string_agg(distinct(code_insee),','),60) as exemple from ban_temp where nom_voie ~ ' -' or nom_voie ~ '- ' or nom_voie ~ '--' group by 1 order by 1;
 "
 sql2csv --db "$DB" -H --query "select code_insee,id,'nom_voie',nom_voie,'nom comportant des tirets' from ban_temp where nom_voie ~ ' -' or nom_voie ~ '- ' or nom_voie ~ '--' " >> erreurs.csv
 
 echo "\n-- noms comportant des caractères étranges\n"
 psql -P pager -c "
-select nom_voie, left(string_agg(code_insee,','),60) as exemple from ban_temp where nom_voie !~ '[a-z0-9\-\/\(\)]' group by 1 order by 1;
+select nom_voie, left(string_agg(distinct(code_insee),','),60) as exemple from ban_temp where nom_voie !~ '[a-z0-9\-\/\(\)]' group by 1 order by 1;
 "
 sql2csv --db "$DB" -H --query "select code_insee,id,'nom_voie',nom_voie,'nom comportant des caracteres non alpha-num' from ban_temp where nom_voie !='' and replace(lower(unaccent(nom_voie)),chr(39),'') ~ '[^a-z0-9\-\/\(\) °]'" >> erreurs.csv
 
