@@ -1,0 +1,24 @@
+type,nb_err
+numero en 5xxx,2270518
+nom_voie contient nom_ld,1772635
+numero a zero,988305
+id_fantoir est vide,891880
+numero+rep en doublons,875605
+numero en 9xxx,433885
+nom ne contient pas dernier mot fantoir,355759
+numero commence par zero,295349
+id en double,159754
+nom_voie et nom_ld vide,48026
+nom_voie contient /,41142
+erreur accentuation,15155
+aucun nom ni code fantoir,10507
+abbreviation residuelle,9789
+nom comportant des parentheses,6106
+nom_voie contient / avec valeurs repetees,5510
+id_fantoir annule/obsolete depuis ,5419
+code_post est vide,2021
+id_fantoir inconnu,604
+abbreviation residuelle doublee,509
+nom comportant des tirets,139
+nom comportant des caracteres non alpha-num,83
+code_post inconnu,8
