@@ -1,0 +1,466 @@
+fantoir_ban,fantoir_bano,voie,nb_ban,nb_bano,diff
+A121,A121,"",1,1,0
+"",,allée bourges saint-genis,5,,5
+,0203,Allée Bourges Saint-Genis,,4,-4
+0897,,allée de la loge,1,,1
+0902,0902,allée de loustauneuf,2,1,1
+0034,0034,allée des alisiers,15,15,0
+0037,0037,allée des alouettes,18,18,0
+0137,0137,allée des bergeronnettes,11,11,0
+0205,0205,allée des bouvreuils,22,22,0
+0278,0278,allée des castors,29,23,6
+0292,0292,allée des chardonnerets,14,14,0
+0308,0308,allée des charmes,16,16,0
+0324,0324,allée des colombes,25,17,8
+0336,0336,allée des cygnes,16,16,0
+0455,0455,allée des érables,13,14,-1
+0477,0477,allée des fauvettes,8,8,0
+0529,0529,allée des frênes,30,30,0
+0699,0699,allée des hirondelles,12,13,-1
+0896,0896,allée des linots,1,1,0
+0970,0970,allée des marronniers,16,14,2
+0987,0987,allée des merles,5,5,0
+0988,0988,allée des mésanges,40,40,0
+1015,1015,allée des mouettes,22,22,0
+1085,,allée des peupliers,3,,3
+1098,1098,allée des pinsons,18,18,0
+1247,1247,allée des rossignols,11,11,0
+1325,1325,allée des sorbiers,10,10,0
+"",,allée des tourterelles,1,,1
+1462,1462,allée des vergnes,4,2,2
+0321,,allée du clos des chênes,12,,12
+A108,A108,allée du clos des chênes,11,12,-1
+1509,1509,allée du cruzeau,25,25,0
+0636,0636,allée du grand chêne,9,9,0
+0388,0388,allée du guesclin,4,1,3
+0763,0763,allée jouvence,2,2,0
+1235,1235,allée robert boulin,44,39,5
+0301,0301,avenue château gaillard,43,43,0
+0328,0328,avenue de condat,28,26,2
+0633,0633,avenue de gourinat,46,40,6
+0083,0083,avenue de la ballastière,7,6,1
+1249,1249,avenue de la roudet,177,157,20
+0430,0430,avenue de l'épinette,218,202,16
+B128,,avenue de l'épinette,1,,1
+0466,0466,avenue de l'europe jean monnet,64,60,4
+0323,0323,avenue des combattants en à f n,48,43,5
+1450,1450,avenue de verdun,86,76,10
+0575,0575,avenue du général de gaulle,130,113,17
+0935,0935,avenue du maréchal foch,197,189,8
+1060,1060,avenue du parc,25,19,6
+1062,1062,avenue du parc des sports,60,60,0
+1132,1132,avenue du port du roy,20,17,3
+0527,0527,avenue françois mauriac,41,35,6
+1511,1511,avenue françois mitterrand,4,5,-1
+0540,0540,avenue gallieni,94,85,9
+0580,0580,avenue georges clémenceau,155,152,3
+0588,0588,avenue georges pompidou,114,107,7
+0692,0692,avenue henri brulle,42,40,2
+0900,0900,avenue louis didier,96,84,12
+0050,0050,boulevard anatole france,46,44,2
+0080,0080,boulevard aristide briand,21,23,-2
+0090,0090,boulevard beauséjour,67,67,0
+0555,0555,boulevard de garderose,63,47,16
+1196,1196,boulevard de quinault,43,40,3
+"",,boulevard du 57e régiment d'infanterie,1,,1
+,0313,Boulevard du 57 R I,,1,-1
+0810,0810,boulevard kléber,55,46,9
+1300,1300,boulevard sauvagnac,55,51,4
+0095,0095,chemin de beausselle,3,3,0
+0111,0111,chemin de belliquet,7,6,1
+0111,0111,Chemin de Belliquet,2,6,-4
+0135,0135,chemin de bequille,20,20,0
+0186,0186,chemin de bonalgue,7,10,-3
+0256,0256,chemin de carré,49,43,6
+0265,0265,chemin de carreyre,4,7,-3
+0327,0327,chemin de couperie,9,10,-1
+0385,0385,chemin de doumayne,43,40,3
+0553,0553,chemin de gardelle,12,5,7
+0638,0638,chemin de grangeneuve,18,9,9
+0671,0671,chemin de gueyrosse,18,16,2
+0329,0329,chemin de la commanderie,3,2,1
+0333,0333,chemin de la conque,4,3,1
+0332,0332,chemin de la corbière,16,26,-10
+0410,0410,chemin de la dussaude,18,16,2
+0836,0836,chemin de la lamberte,7,11,-4
+1112,1112,chemin de plince,22,19,3
+1208,1208,chemin de rené,2,3,-1
+1223,1223,chemin de ridet,3,1,2
+1225,1225,chemin de rifat,12,7,5
+1263,1263,chemin de rouilledinat,4,3,1
+1285,,chemin de sales,5,,5
+,0844,Chemin des Lamproies,,1,-1
+1045,1045,chemin des ormeaux,3,5,-2
+1347,1347,chemin de taillefer,8,5,3
+1445,1445,chemin de verdet,26,26,0
+0223,0223,Chemin du Brûle,1,1,0
+0273,0273,chemin du casse,34,30,4
+0325,0325,chemin du clos palus,4,2,2
+0992,0992,chemin du milieu,5,5,0
+1084,1084,chemin du pt beauséjour,7,2,5
+1261,1261,chemin du roy,4,3,1
+1268,1268,chemin du rugby,3,3,0
+1265,1265,chemin du ruste,17,18,-1
+A083,,chemin du ruste,1,,1
+,1279,Chemin du Saillanais,,1,-1
+1444,1444,chemin du vélodrome,11,6,5
+A031,A031,clos de garderose,24,16,8
+,A112,Clos de l'Housteauneuf,,12,-12
+0812,0812,clos kléber,4,1,3
+0610,0610,cours des girondins,97,91,6
+1390,1390,cours tourny,102,96,6
+0519,0519,esplanade françois mitterrand,10,10,0
+A035,A035,hameau de la grange,28,1,27
+0026,0026,impasse albert chastre,10,5,5
+0085,0085,impasse barreau,7,9,-2
+0145,0145,impasse bertin,11,6,5
+0155,0155,impasse besson,8,8,0
+0170,0170,impasse blanis,8,8,0
+0210,0210,impasse boyer,26,27,-1
+0228,0228,impasse buisson,11,11,0
+0230,0230,impasse bulle,12,13,-1
+0257,0257,impasse carré,4,4,0
+,1518,Impasse Carré 1,,5,-5
+0274,0274,impasse cassan,5,5,0
+0297,0297,impasse châtelier,11,7,4
+0199,0199,impasse de la bordette,4,4,0
+0959,0959,impasse de la marne,5,4,1
+1055,1055,impasse de la paillette,2,2,0
+A101,A101,impasse de la petite ferme,13,11,2
+,1507,Impasse de la Petite Ferme,,1,-1
+1513,,impasse des canelles,20,,20
+0289,0289,impasse des chardonnerets,4,3,1
+1019,1019,impasse des moulins blancs,11,10,1
+1269,1269,impasse des sables,7,12,-5
+1411,1411,impasse des treilles,7,7,0
+1519,1519,impasse du clos duguit,4,1,3
+0579,0579,impasse du général ragot,4,4,0
+0394,0394,impasse dumond,6,2,4
+1004,1004,impasse du mont blanc,5,5,0
+1063,1063,impasse du parc des sports,27,27,0
+0397,0397,impasse duperrieu,3,1,2
+1088,,impasse du phénix,19,,19
+0398,0398,impasse dupois,10,12,-2
+1457,1457,impasse du verger,21,21,0
+0459,0459,impasse étienne sabatie,8,7,1
+0460,0460,impasse étienne sabatie,1,65,-64
+0475,,impasse fauche,1,,1
+0525,0525,impasse françois constant,8,7,1
+0528,0528,impasse françois mauriac,17,17,0
+0558,0558,impasse garitey,7,6,1
+"",,impasse georges pompidou,1,,1
+0627,0627,impasse gontet,7,5,2
+0645,0645,impasse grangère,3,4,-1
+"",,impasse hélène boucher,6,,6
+,0685,Impasse Hélène Boucher,,3,-3
+0694,0694,impasse henri brulle,8,9,-1
+0733,0733,impasse jalousie,5,5,0
+0736,0736,Impasse Jean Arnaud,1,1,0
+0765,0765,impasse jugla cassin,5,4,1
+0790,0790,impasse jules simon,15,18,-3
+0811,0811,impasse kléber,15,13,2
+0815,0815,impasse lacapelle,5,6,-1
+0851,0851,impasse largeteau,3,4,-1
+0899,0899,impasse louis didier,1,1,0
+0904,0904,impasse loyer,4,2,2
+0994,0994,impasse mirande,16,16,0
+1514,1514,impasse monrepos,36,13,23
+1057,1057,impasse pamperdut,1,1,0
+1079,1079,impasse paul bert,3,3,0
+1087,1087,impasse petit village,13,12,1
+1094,1094,impasse pierre benoît,3,1,2
+1224,1224,impasse rigounet,4,4,0
+1267,1267,impasse rousseau,8,3,5
+1421,1421,impasse trocard,5,8,-3
+1442,1442,impasse vandet,7,7,0
+1490,1490,impasse vitrac,6,8,-2
+A024,A024,lotissement beauséjour,24,24,0
+,A119,Lotissement Clos de Monrepos,,6,-6
+,A110,Lotissement d'Activites Le Carré,,7,-7
+B017,,lotissement des narcisses,3,,3
+A054,A054,lotissement des narcisses,11,2,9
+A026,A026,lotissement doumayne,15,16,-1
+,A118,Lotissement Doumayne Nord,,3,-3
+A011,A011,lotissement du clos chauvin,22,22,0
+A102,A102,lotissement le basson,20,16,4
+A116,A116,lotissement le clos du gui,1,3,-2
+A081,A081,lotissement le ruste,11,11,0
+A038,,lotissement les iris,3,,3
+"",,lotissement les myosotis,21,,21
+A100,A100,lotissement phénix,14,16,-2
+A107,A107,lotissement z à les dagueys,13,12,1
+,A117,Lotissement Z.A. Les Dagueys 2,,9,-9
+1516,1516,passage de la chartreuse,3,3,0
+0091,,petit chemin de barreau,8,,8
+1090,1090,petite ruede périgueux,7,8,-1
+0020,0020,place abel surchamp,34,32,2
+0063,0063,place antoine jay,4,1,3
+0340,0340,place decazes,17,16,1
+0334,0334,place de la croix rouge,12,13,-1
+0047,0047,place de l'amitié,4,4,0
+0440,0440,place de l'épinette,4,4,0
+0980,0980,place des martyrs de la résistance,5,7,-2
+1375,1375,place des tilleuls,9,9,0
+,0309,Place du Chateau d'Eau,,2,-2
+"",,place du château d'eau,1,,1
+0660,0660,place guadet,14,8,6
+0745,0745,place jean moulin,18,17,1
+0760,0760,place joffre,17,16,1
+0930,0930,place maréchal de lattre de tassigny,11,6,5
+1207,1207,place rené beauchamp,18,16,2
+1209,1209,place rené princeteau,8,7,1
+1283,1283,place saint-jean,11,11,0
+0197,0197,pt chemin de la bordette,15,14,1
+1266,1266,quai de la roquette,1,1,0
+0721,0721,quai de l'isle,12,13,-1
+1290,1290,quai des salinières,15,14,1
+1180,1180,quai du priourat,37,29,8
+0570,0570,quai général d'amade,17,14,3
+1330,1330,quai souchet,16,15,1
+A008,,résidence du casse,13,,13
+A090,A090,résidence du stade,11,11,0
+A105,,résidence du vieux tilleul,28,,28
+A021,,résidence edmond michelet,39,,39
+A028,A028,résidence la ganne,20,20,0
+A080,A080,résidence la roseraie,13,14,-1
+,A111,Résidence Le Hameau de l'Epinette,,34,-34
+A051,A051,résidence le lour,19,19,0
+A109,A109,résidence le mayne,12,11,1
+"",,résidence le pintey,22,,22
+A036,A036,résidence les hortensis,28,29,-1
+"",,résidence le vert,4,,4
+A032,A032,résidence petit garderose,11,11,0
+A057,,résidence peyregourde,23,,23
+A060,A060,résidence peyronneau,22,1,21
+A097,A097,résidence vercors,6,6,0
+0997,0997,route de montagne,36,34,2
+1280,1280,route de saint-émilion,128,113,15
+"",,rue 1er reg artillerie colonial,34,,34
+0015,0015,rue abbé lewden,15,16,-1
+0018,0018,rue abel boireau,34,27,7
+0023,,rue adèle esquiros,24,,24
+1294,1294,rue adolphe sellenik,5,6,-1
+0030,0030,rue alexandre,23,23,0
+0033,0033,rue aliénor d'aquitaine,5,5,0
+1034,1034,rue alphonse giboin,6,3,3
+0040,0040,rue alsace lorraine,13,11,2
+0045,0045,rue ambroise paré,21,2,19
+0060,0060,rue andré nhevoit,45,43,2
+0100,0100,rue beillon,31,32,-1
+0110,0110,rue belliquet,21,22,-1
+0120,0120,rue beloeuvre,35,36,-1
+0140,0140,rue bernard grollier,23,28,-5
+0147,0147,rue bertrand robin,6,7,-1
+0150,0150,rue besson,40,43,-3
+"",,rue bial de bellerade,51,,51
+,1504,Rue Bial de Bellerade,,6,-6
+0160,0160,rue blanc,29,30,-1
+0180,0180,rue blanqui,5,9,-4
+0220,0220,rue boyer,23,19,4
+0240,0240,rue burgade,12,13,-1
+1510,1510,rue camille claudel,8,8,0
+0251,0251,rue cantemerle,26,24,2
+0249,,rue canterane,26,,26
+0254,0254,rue careyron,6,6,0
+0260,0260,rue carrère,27,22,5
+0290,0290,rue chanzy,38,33,5
+0291,0291,rue chaperon,33,33,0
+0293,0293,rue chaperon grangère,27,21,6
+0320,0320,rue clément thomas,54,47,7
+1523,1523,rue colette,38,16,22
+0086,0086,rue de barreau,40,41,-1
+0186,0186,rue de bonalgue,2,10,-8
+0185,0185,rue de bonalgue,28,27,1
+0283,,rue de chantoiseau,20,,20
+0590,0590,rue de gereaux,33,30,3
+A079,A079,rue de keynsham,1,1,0
+1520,1520,rue de keynsham,2,1,1
+0088,0088,rue de la barbanne,11,11,0
+0130,0130,rue de la belote,10,10,0
+0200,0200,rue de la bordette,83,79,4
+0250,0250,rue de la cabane,10,14,-4
+0317,0317,rue de la cité,9,7,2
+0322,0322,rue de la corbière,34,7,27
+0332,0332,rue de la corbière,5,26,-21
+0380,0380,rue de la dordogne,8,8,0
+0551,0551,rue de la ganne,13,10,3
+0620,0620,rue de la glacière,51,51,0
+0835,0835,rue de la lamberte,39,41,-2
+B021,,rue de la lamberte,1,,1
+0350,0350,rue delalande,112,96,16
+0035,0035,rue de l'algérie,25,20,5
+0890,0890,rue de la liberté,9,11,-2
+0960,0960,rue de la marne,129,132,-3
+1115,1115,rue de la pléiade,12,13,-1
+1127,1127,rue de la pointe,7,7,0
+0070,0070,rue de l'argonne,18,19,-1
+1270,1270,rue de la sablière,60,62,-2
+1320,1320,rue de la somme,17,12,5
+1350,1350,rue de la tarreyre,23,24,-1
+1517,1517,rue de la tour cruzeau,12,11,1
+0450,0450,rue de l'ermitage,33,33,0
+1508,1508,rue de l'houstauneuf,30,9,21
+0717,0717,rue de l'industrie,16,12,4
+0730,0730,rue de l'isle,22,19,3
+"",,rue de logroño,1,,1
+1440,1440,rue de l'union,11,12,-1
+"",,rue de l'yser,1,,1
+,1502,Rue de l'Yser,,1,-1
+1000,1000,rue de montaudon,107,105,2
+1110,1110,rue de plaisance,9,12,-3
+1203,1203,rue de rabar,17,13,4
+1430,1430,rue des 3 frères bejard,73,73,0
+1190,1190,rue des 4 frères robert,71,69,2
+0038,0038,rue des aloses,8,9,-1
+0190,0190,rue des bordes,90,85,5
+0280,0280,rue des chais,53,47,6
+0311,0311,rue des cheyennes,5,5,0
+1522,1522,rue de schwandorf,4,3,1
+0341,0341,rue des dagueys,80,42,38
+0339,,rue des dalhias,13,,13
+0360,0360,rue des docteurs moyzes,23,18,5
+0413,,rue des églantiers,21,,21
+0530,0530,rue des frères durand,25,25,0
+0623,,rue des glaïeuls,5,,5
+0624,,rue des glycines,8,,8
+0715,0715,rue des hortensias,29,23,6
+0845,0845,rue des lamproies,8,6,2
+0895,0895,rue des lilas,21,22,-1
+0995,,rue des mimosas,12,,12
+1020,1020,rue des moulins blancs,19,21,-2
+1030,1030,rue des murs,13,13,0
+1204,1204,rue des réaux,44,40,4
+1246,,rue des rosiers,8,,8
+1293,1293,rue des saules,95,97,-2
+1380,1380,rue des tonneliers,15,14,1
+1410,1410,rue des treilles,17,16,1
+1405,1405,rue de toussaint,33,30,3
+1475,1475,rue de videlot,37,37,0
+0354,0354,rue dieudonné costes,20,19,1
+0370,0370,rue donnet,7,11,-4
+,1145,Rue du 1Er R.A.C,,38,-38
+0158,0158,rue du bison gris,1,1,0
+0330,0330,rue du colonel picot,8,7,1
+0326,0326,rue du cormier,43,42,1
+,0359,Rue du Docteur Maupetit,,1,-1
+0361,0361,rue du docteur nard,47,44,3
+0577,0577,rue du général de monsabert,11,12,-1
+0578,0578,rue du général ragot,18,20,-2
+0637,0637,rue du grand sioux,3,3,0
+0680,0680,rue du haras,24,28,-4
+0937,0937,rue du maréchal juin,7,8,-1
+0940,0940,rue du maréchal leclerc,19,19,0
+0950,0950,rue du maréchal lyautey,21,17,4
+0961,0961,rue du maroc,20,21,-1
+0963,0963,rue du martin pêcheur,30,22,8
+0390,0390,rue dumas,26,26,0
+1037,1037,rue du nouveau monde,11,11,0
+1130,1130,rue du port coiffe,11,13,-2
+1150,1150,rue du président carnot,98,97,1
+1160,1160,rue du président doumer,118,112,6
+1170,1170,rue du président wilson,22,18,4
+1175,1175,rue du prince noir,25,10,15
+1185,1185,rue du priourat,11,12,-1
+0400,0400,rue durand,16,18,-2
+1315,1315,rue du shérif,4,4,0
+1360,1360,rue du théâtre,9,9,0
+0412,0412,rue edgar degas,9,8,1
+"",,rue édith collin clerjaud,5,,5
+0420,0420,rue élisabeth gelly,11,6,5
+0425,0425,rue émile huguet,19,17,2
+0460,0460,rue étienne sabatie,64,65,-1
+0463,0463,rue eugène atget,25,26,-1
+0465,0465,rue eugène delacroix,33,33,0
+0470,0470,rue faidherbe,30,28,2
+0515,0515,rue ferdinand dalat,17,17,0
+0479,0479,rue fernand léger,20,21,-1
+0480,0480,rue firmin bloy,20,20,0
+0482,,rue firmin didot,14,,14
+0500,0500,rue fonneuve,54,51,3
+0510,0510,rue fourcaud,25,30,-5
+0520,0520,rue françois constant,47,43,4
+0518,0518,rue françoise dolto,2,2,0
+0526,0526,rue françois venayre,14,14,0
+1515,1515,rue françois vidal,9,4,5
+0536,0536,rue gabriel massias,66,63,3
+0550,0550,rue gambetta,88,81,7
+0559,0559,rue gaucher piola,13,15,-2
+,0565,Rue Gelly,,8,-8
+,0583,Rue Genevieve Anthonioz de Gau,,5,-5
+"",,rue geneviève anthonioz de gaulle,6,,6
+0675,0675,rue georges guynemer,48,47,1
+0585,0585,rue georges kany,11,11,0
+0600,0600,rue giraud,33,34,-1
+0630,0630,rue goureau,26,26,0
+0640,0640,rue grangère,9,11,-2
+0656,0656,rue grelot,14,16,-2
+0670,0670,rue guadet,11,10,1
+0690,0690,rue henri barbusse,31,33,-2
+0696,0696,rue henri guillaumet,20,20,0
+0697,0697,rue henri jean moreau,15,14,1
+1503,1503,rue henry guillier,20,20,0
+0700,0700,rue hoche,31,29,2
+0710,0710,rue honoré vinson,27,28,-1
+0735,0735,rue james peidenis,21,19,2
+0737,0737,rue jean baptiste souffrain,4,5,-1
+0138,,rue jean bernadet,21,,21
+0740,0740,rue jean jacques rousseau,94,91,3
+0741,0741,rue jean jaurès,73,72,1
+0743,0743,rue jean mermoz,49,45,4
+0747,,rue jean raymond guyon,30,,30
+0770,0770,rue jules favre,38,32,6
+0780,0780,rue jules ferry,60,50,10
+0791,0791,rue jules simon,42,37,5
+0800,0800,rue jules steeg,112,114,-2
+0805,0805,rue jules vedrines,7,3,4
+0820,0820,rue lacaze,21,21,0
+0830,0830,rue lafleur,7,6,1
+1150,1150,rue lamothe,1,97,-96
+0840,0840,rue lamothe,61,61,0
+0850,0850,rue largeteau,35,33,2
+0860,0860,rue lataste,53,45,8
+0864,0864,rue léo lagrange,6,2,4
+0865,0865,rue léon duguit,31,1,30
+0870,0870,rue leperche,13,16,-3
+0903,0903,rue louise michel,4,4,0
+1525,,rue lucie aubrac,5,,5
+0910,0910,rue lyrot,48,42,6
+0920,0920,rue maréchal bugeaud,15,15,0
+0955,,rue marie hélène lefaucheux,4,,4
+0974,0974,rue martrinchard,6,6,0
+0982,0982,rue maryse bastié,1,1,0
+0983,0983,rue max linder,47,43,4
+0990,0990,rue michel montaigne,102,88,14
+1010,1010,rue montesquieu,70,65,5
+1040,1040,rue orbe,42,42,0
+1070,1070,rue pasteur,55,56,-1
+1080,1080,rue paul bert,35,35,0
+1078,1078,rue paul cézanne,12,13,-1
+1081,1081,rue paul gauguin,28,29,-1
+1091,1091,rue pierre benoît,31,29,2
+1092,1092,rue pierre et marie curie,25,26,-1
+0472,,rue pierre fargues,16,,16
+1100,1100,rue pistouley,42,40,2
+1120,1120,rue pline parmentier,43,45,-2
+1200,,rue raymond fontemoing,14,,14
+1202,1202,rue raymond guinodie,1,1,0
+1226,1226,rue rivière,11,8,3
+1239,1239,rue robin,12,8,4
+1240,1240,rue rocherol,31,32,-1
+1242,1242,rue roland garros,3,2,1
+1245,1245,rue rosa bonheur,2,2,0
+1260,1260,rue roudier,12,16,-4
+1262,1262,rue rozanoff,8,7,1
+1282,1282,rue saint-exupéry,16,15,1
+1310,1310,rue savorgnan de brazza,17,17,0
+1340,1340,rue surein,22,23,-1
+1343,,rue suzanne chaumet,1,,1
+1370,1370,rue thiers,107,102,5
+1385,1385,rue toulouse lautrec,10,6,4
+1420,1420,rue trocard,58,63,-5
+1465,1465,rue vergniaud,18,19,-1
+1470,1470,rue victor hugo,60,51,9
+"",,rue victor schoelcher,6,,6
+,1524,Rue Victor Schœlcher,,1,-1
+1480,1480,rue vieille grange,9,11,-2
+1500,1500,rue waldeck rousseau,67,54,13
