@@ -24,8 +24,16 @@ psql -c "
 update ban_temp set nom_voie='' where nom_voie is null;
 update ban_temp set nom_ld='' where nom_ld is null;
 update ban_temp set alias='' where alias is null;
+update ban_temp set id_fantoir='' where id_fantoir is null;
 
+-- création des index
+create index ban_temp_id on ban_temp using spgist(id);
+create index ban_temp_insee on ban_temp using spgist(code_insee);
+"
 
+exit
+
+psql -c "
 -- import initial de la table ban
 drop table if exists ban;
 create table ban as (select b.id, b.code_insee || '_' || coalesce(id_fantoir||cle_rivoli,'#'||translate(unaccent(UPPER(nom_voie||nom_ld)),'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -'||chr(39),'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')) || '_' || coalesce(numero,'') || '_' || coalesce(rep,'') as cle, b.code_insee, id_fantoir||coalesce(cle_rivoli,'') as id_fantoir, numero, rep, replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(initcap(nom_voie),' Du ',' du '),' De ',' de '),' Le ',' le '),' La ',' la '),' Des ',' des '),' L'||chr(39),' l'||chr(39)),' D'||chr(39),' d'||chr(39)),' Au ',' au '),' Aux ',' aux '),' À ',' à '),' Et ',' et '),' Dit ',' dit '),' Dite ',' dite '),' En ',' en ') as nom_voie, nom_ld, alias, code_post, nom_commune, st_makepoint(avg(lon),avg(lat)) as geom from ban_temp b left join dgfip_fantoir f on (f.code_insee=b.code_insee and f.id_voie=b.id_fantoir) group by 1,2,3,4,5,6,7,8,9,10);
