@@ -2710,7 +2710,7 @@ dep_epci;siren_epci;nom_complet;nj_epci2015;fisc_epci2015;nb_com_epci_2015;ptot_
 08;240800862;CC des Crêtes Préardennaises;CC;FPU;94;22464;21870;08;08151;210801379;Ecordal;297;295
 08;240800862;CC des Crêtes Préardennaises;CC;FPU;94;22464;21870;08;08160;210801452;Evigny;216;203
 08;240800862;CC des Crêtes Préardennaises;CC;FPU;94;22464;21870;08;08163;210801486;Faissault;238;228
-08;240800862;CC des Crêtes Préardennaises;CC;FPU;94;22464;21870;08;08165;210801502;FALSE;56;56
+08;240800862;CC des Crêtes Préardennaises;CC;FPU;94;22464;21870;08;08165;210801502;Faux;56;56
 08;240800862;CC des Crêtes Préardennaises;CC;FPU;94;22464;21870;08;08178;210801627;Fraillicourt;194;192
 08;240800862;CC des Crêtes Préardennaises;CC;FPU;94;22464;21870;08;08192;210801759;Givron;100;98
 08;240800862;CC des Crêtes Préardennaises;CC;FPU;94;22464;21870;08;08193;210801767;Givry;266;261
@@ -8876,7 +8876,7 @@ dep_epci;siren_epci;nom_complet;nj_epci2015;fisc_epci2015;nb_com_epci_2015;ptot_
 24;200040889;CC Communauté de Communes de Portes Sud Périgord;CC;FA;28;8722;8527;24;24167;212401673;Eymet;2678;2616
 24;200040889;CC Communauté de Communes de Portes Sud Périgord;CC;FA;28;8722;8527;24;24168;212401681;Plaisance;450;440
 24;200040889;CC Communauté de Communes de Portes Sud Périgord;CC;FA;28;8722;8527;24;24176;212401764;Faurilles;42;42
-24;200040889;CC Communauté de Communes de Portes Sud Périgord;CC;FA;28;8722;8527;24;24177;212401772;FALSE;610;596
+24;200040889;CC Communauté de Communes de Portes Sud Périgord;CC;FA;28;8722;8527;24;24177;212401772;Faux;610;596
 24;200040889;CC Communauté de Communes de Portes Sud Périgord;CC;FA;28;8722;8527;24;24181;212401814;Flaugeac;335;324
 24;200040889;CC Communauté de Communes de Portes Sud Périgord;CC;FA;28;8722;8527;24;24186;212401863;Fonroque;299;293
 24;200040889;CC Communauté de Communes de Portes Sud Périgord;CC;FA;28;8722;8527;24;24212;212402127;Issigeac;746;728
