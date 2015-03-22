@@ -17,6 +17,8 @@ echo "\n-- nom_voie contient nom_ld\n"
 psql -c "\copy (select b.code_insee, b.id, 'nom_voie+nom_ld',b.nom_voie,'nom_voie contient nom_ld' from ban_temp b join ban_temp c on (c.id=b.id) where b.nom_voie !='' and c.nom_ld !='' and lower(unaccent(b.nom_voie)) like '%' || lower(unaccent(c.nom_ld)) || '%') to temp with (format csv, header false)"
 cat temp >> erreurs.csv
 
+echo "\n-- aucun nom ni code fantoir\n"
+sql2csv --db "$DB" -H --query "select code_insee,id,'nom_voie+nom_ld+alias+id_fantoir','','aucun nom ni code fantoir' from ban_temp where nom_voie||nom_ld||alias||id_fantoir=''" >> erreurs.csv
 
 echo "\n-- nombre de nom_voie avec '/' (regroupés par département)\n"
 psql -P pager -c "select left(code_insee,2) as dept, count(*) as nb, min(nom_voie) as exemple from ban_temp where nom_voie like '%/%' group by 1 order by 1;"
