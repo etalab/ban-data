@@ -53,9 +53,9 @@ done
 
 echo "\n-- vérification de présence d'abbréviations doublées\n"
 psql -P pager -c "
-select nom_voie, count(*) from ban_temp where nom_voie ~ '(^| )(chemin .*chem|grand.*gde)( |$)' group by 1 order by 2 desc;
+select nom_voie, count(*) from ban_temp where nom_voie ~ '(^| )(ancien.* anc|route .* (route|rte)|chemin .*chem(in|)|grand.*(gde|grande))( |$)' and NOT nom_voie ~ '/' group by 1 order by 2 desc;
 "
-sql2csv --db "$DB" -H --query "select code_insee,id,'nom_voie',nom_voie,'abbreviation residuelle doublee' from ban_temp where nom_voie ~ '(^| )(chemin .*chem|grand.*gde)( |$)' " >> erreurs.csv
+sql2csv --db "$DB" -H --query "select code_insee,id,'nom_voie',nom_voie,'abbreviation residuelle doublee' from ban_temp where nom_voie ~ '(^| )(ancien.* anc|route .* (route|rte)|chemin .*chem(in|)|grand.*(gde|grande))( |$)' and NOT nom_voie ~ '/' " >> erreurs.csv
 
 echo "\n-- noms très longs\n"
 psql -P pager -c "
