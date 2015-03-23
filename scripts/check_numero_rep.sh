@@ -13,7 +13,7 @@ sql2csv --db "$DB" -H --query "select code_insee,id,'numero',numero,'numero en 5
 sql2csv --db "$DB" -H --query "select code_insee,id,'numero',numero,'numero en 9xxx' from ban_temp where numero::numeric>=9000" >> erreurs.csv
 
 echo "\n-- indice de répétition en minuscule\n"
-sql2csv --db "$DB" -H --query "select code_insee,id,'rep',rep,'rep en minuscule' from ban_temp where rep != upper(rep) group by 1 order by 1" >> erreurs.csv
+sql2csv --db "$DB" -H --query "select code_insee,id,'rep',rep,'rep en minuscule' from ban_temp where rep != upper(rep)" >> erreurs.csv
 
 echo "\n-- adresses en doublon\n"
 psql -c "\copy (select code_insee, unnest(doublons), 'numero+rep',numero,format('numero+rep en %s doublons: %s',nb::text,adr) from (select code_insee, array_agg(distinct(id)) as doublons, numero, trim(numero||' '||rep)||' '||nom_voie||' '||nom_ld as adr, count(*) as nb from ban_temp group by code_insee,nom_voie,nom_ld,numero,rep) as d where nb>1) to temp with (format csv, header false);"

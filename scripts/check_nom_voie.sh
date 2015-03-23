@@ -45,9 +45,7 @@ echo "\n-- vérification de présence d'abbréviations résiduelles\n"
 for a in `csvcut ../data/abbrev.txt --columns 1 | tail -n +2 | tr '[:upper:]' '[:lower:]' | tr '_' '\ '`
 do
 echo "  abrev: $a"
-psql -P pager -c "
-select nom_voie, count(*) as nb, left(string_agg(distinct(code_insee),','),60) as exemple from ban_temp where nom_voie ~ '(^| )$a( |$)' group by 1 order by 2 desc;
-" &
+# psql -P pager -c "select nom_voie, count(*) as nb, left(string_agg(distinct(code_insee),','),60) as exemple from ban_temp where nom_voie ~ '(^| )$a( |$)' group by 1 order by 2 desc;"
 sql2csv --db "$DB" -H --query "select code_insee,id,'nom_voie',nom_voie,'abbreviation residuelle: $a' from ban_temp where nom_voie ~ '(^| )$a( |$)' " >> erreurs.csv
 done
 
@@ -76,7 +74,7 @@ sql2csv --db "$DB" -H --query "select code_insee,id,'nom_voie',nom_voie,'nom com
 
 echo "\n-- noms comportant des caractères étranges\n"
 psql -P pager -c "
-select nom_voie, left(string_agg(distinct(code_insee),','),60) as exemple from ban_temp where nom_voie !~ '[a-z0-9\-\/\(\)]' group by 1 order by 1;
+select nom_voie, left(string_agg(distinct(code_insee),','),60) as exemple from ban_temp where lower(unaccent(nom_voie)) !~ '[a-z0-9\-\/\(\)]' group by 1 order by 1;
 "
 sql2csv --db "$DB" -H --query "select code_insee,id,'nom_voie',nom_voie,'nom comportant des caracteres non alpha-num' from ban_temp where nom_voie !='' and replace(lower(unaccent(nom_voie)),chr(39),'') ~ '[^a-z0-9\-\/\(\) °]'" >> erreurs.csv
 
