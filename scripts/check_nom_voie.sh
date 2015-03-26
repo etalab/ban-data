@@ -79,3 +79,16 @@ select nom_voie, left(string_agg(distinct(code_insee),','),60) as exemple from b
 sql2csv --db "$DB" -H --query "select code_insee,id,'nom_voie',nom_voie,'nom comportant des caracteres non alpha-num' from ban_temp where nom_voie !='' and replace(lower(unaccent(nom_voie)),chr(39),'') ~ '[^a-z0-9\-\/\(\) °]'" >> erreurs.csv
 
 
+echo "\n-- nom_voie identique nom_ld"
+psql -c "\copy (select code_insee,id,'nom_voie',nom_voie,'nom_voie et nom_ld identiques : '||nom_ld from ban_temp where nom_ld !='' and unaccent(lower(nom_voie))=unaccent(lower(nom_ld))) to temp with (format csv, header false);"; cat temp >> erreurs.csv
+
+echo "\n-- nom_voie et alias identiques"
+psql -c "\copy (select code_insee,id,'nom_voie',nom_voie,'nom_voie et alias identiques : '||alias from ban_temp where alias !='' and unaccent(lower(nom_voie))=unaccent(lower(alias))) to temp with (format csv, header false);"; cat temp >> erreurs.csv
+
+echo "\n-- nom_ld et alias identiques"
+psql -c "\copy (select code_insee,id,'nom_ld',nom_ld,'nom_ld et alias identiques : '||alias from ban_temp where nom_ld !='' and replace(lower(unaccent(nom_ld)),'-',' ')=replace(lower(unaccent(alias)),'-',' ')) to temp with (format csv, header false);"; cat temp >> erreurs.csv
+
+echo "\n-- nom_voie vide, nom_ld present et FANTOIR indique LD"
+psql -c "\copy (select code_insee,id,'nom_ld',nom_ld,'nom_voie vide + nom_ld present + FANTOIR indique LD' from ban_temp where nom_voie='' and nom_ld !='' and id_fantoir LIKE 'B%') to temp with (format csv, header false);"; cat temp >> erreurs.csv
+
+
