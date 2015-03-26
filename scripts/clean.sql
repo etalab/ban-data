@@ -3,6 +3,9 @@
 -- code_post: "code_post est vide"
 with u as (select id, code_insee, code_post, string_agg(distinct(p.cp),',') as cp, count(distinct(p.cp)) as nb from ban_temp b left join poste_cp c on (c.cp=b.code_post) join poste_cp p on (p.insee=b.code_insee) where c.cp is null group by 1,2,3) update ban_temp b set code_post=u.cp from u where b.id=u.id and nb=1;
 
+-- nom_ld: suppression des *NOBDUNI*
+update ban_temp set nom_ld=replace(nom_ld,'*NOBDUNI*','') where nom_ld like '*NOBDUNI*%';
+
 -- nom_voie: "nom_voie contient / avec valeurs repetees"
 with u as (select id as u_id,regexp_replace(nom_voie,'^(.*)/\1$','\1') as u_nom from ban_temp where nom_voie ~ '^(.*)/\1$') update ban_temp set nom_voie=u_nom from u where id=u_id;
 
@@ -10,8 +13,8 @@ with u as (select id as u_id,regexp_replace(nom_voie,'^(.*)/\1$','\1') as u_nom 
 with u as (select id as u_id, left(nom_voie, position('/' in nom_voie)-1) as u_nom1, substring(nom_voie, position('/' in nom_voie)+1) as u_nom2 from ban_temp where nom_voie ~ '\/' and NOT nom_voie ~ '\/.*\/' and alias='') update ban_temp set nom_voie=u_nom1, alias=u_nom2 from u where id=u_id and alias='';
 
 -- désabréviations...
+update ban_temp set nom_voie=regexp_replace(nom_voie,'^aer ','aérodrome ') where nom_voie like 'aer %';
 update ban_temp set nom_voie=regexp_replace(nom_voie,'^brtl ','bretelle ') where nom_voie like 'brtl %';
-
 -- ch/che/chem ambiguité avec chemin, cheminement
 -- update ban_temp set nom_voie=regexp_replace(nom_voie,'^ch ','chemin ') where nom_voie like 'ch %';
 update ban_temp set nom_voie=regexp_replace(nom_voie,'^rlle ','ruelle ') where nom_voie like 'rlle %';
@@ -44,6 +47,8 @@ update ban_temp set nom_voie=regexp_replace(nom_voie,' fbg ',' faubourg ') where
 -- FON/FONT ambiguité FON/FONT/FONTAINE
 update ban_temp set nom_voie=regexp_replace(nom_voie,' du foss ',' du fossé ') where nom_voie like '% du foss %';
 update ban_temp set nom_voie=regexp_replace(nom_voie,' gal (de |leclerc|daugan|chanzy|giraud|labat|paul|fauchon|le co|guillaumat|bruy|vuillemin|charles|delfino|duch|maurice|grazi|margue|soule|combelle|dubois|sir|duval)',' général \1') where nom_voie like '% gal %';
+update ban_temp set nom_voie=regexp_replace(nom_voie,' mal (de |leclerc|delat)',' maréchal \1') where nom_voie like '% mal %';
+update ban_temp set nom_voie=regexp_replace(nom_voie,' reg ',' régiment ') where nom_voie like '% reg %';
 update ban_temp set nom_voie=regexp_replace(nom_voie,'^grp ','groupe ') where nom_voie like 'grp %';
 update ban_temp set nom_voie=regexp_replace(nom_voie,'^hab ','habitat ') where nom_voie like 'hab %';
 update ban_temp set nom_voie=regexp_replace(nom_voie,' hab ',' habitat ') where nom_voie like '% hab %';
@@ -87,15 +92,70 @@ update ban_temp set nom_voie=regexp_replace(nom_voie,'(avenue|place|boulevard|pl
 update ban_temp set nom_voie=regexp_replace(nom_voie,'grand.rue (grande.rue)','\1') where nom_voie like '%grande_rue%';
 
 -- nom_voie + nom_ld + alias est vide > reprise du nom d'après noms issus des plans cadastraux (algo BANO)
-with u as (select b.id as u_id, f.nom_cadastre from ban_temp b join dgfip_noms_cadastre f on (f.fantoir like b.code_insee||b.id_fantoir||'%') where id_fantoir !='' and nom_voie||nom_ld||alias='' and b.code_insee like '0%' and f.fantoir like '0%') update ban_temp set nom_voie=nom_cadastre from u where id=u_id;
-with u as (select b.id as u_id, f.nom_cadastre from ban_temp b join dgfip_noms_cadastre f on (f.fantoir like b.code_insee||b.id_fantoir||'%') where id_fantoir !='' and nom_voie||nom_ld||alias='' and b.code_insee like '1%' and f.fantoir like '1%') update ban_temp set nom_voie=nom_cadastre from u where id=u_id;
-with u as (select b.id as u_id, f.nom_cadastre from ban_temp b join dgfip_noms_cadastre f on (f.fantoir like b.code_insee||b.id_fantoir||'%') where id_fantoir !='' and nom_voie||nom_ld||alias='' and b.code_insee like '2%' and f.fantoir like '2%') update ban_temp set nom_voie=nom_cadastre from u where id=u_id;
-with u as (select b.id as u_id, f.nom_cadastre from ban_temp b join dgfip_noms_cadastre f on (f.fantoir like b.code_insee||b.id_fantoir||'%') where id_fantoir !='' and nom_voie||nom_ld||alias='' and b.code_insee like '3%' and f.fantoir like '3%') update ban_temp set nom_voie=nom_cadastre from u where id=u_id;
-with u as (select b.id as u_id, f.nom_cadastre from ban_temp b join dgfip_noms_cadastre f on (f.fantoir like b.code_insee||b.id_fantoir||'%') where id_fantoir !='' and nom_voie||nom_ld||alias='' and b.code_insee like '4%' and f.fantoir like '4%') update ban_temp set nom_voie=nom_cadastre from u where id=u_id;
-with u as (select b.id as u_id, f.nom_cadastre from ban_temp b join dgfip_noms_cadastre f on (f.fantoir like b.code_insee||b.id_fantoir||'%') where id_fantoir !='' and nom_voie||nom_ld||alias='' and b.code_insee like '5%' and f.fantoir like '5%') update ban_temp set nom_voie=nom_cadastre from u where id=u_id;
-with u as (select b.id as u_id, f.nom_cadastre from ban_temp b join dgfip_noms_cadastre f on (f.fantoir like b.code_insee||b.id_fantoir||'%') where id_fantoir !='' and nom_voie||nom_ld||alias='' and b.code_insee like '6%' and f.fantoir like '6%') update ban_temp set nom_voie=nom_cadastre from u where id=u_id;
-with u as (select b.id as u_id, f.nom_cadastre from ban_temp b join dgfip_noms_cadastre f on (f.fantoir like b.code_insee||b.id_fantoir||'%') where id_fantoir !='' and nom_voie||nom_ld||alias='' and b.code_insee like '7%' and f.fantoir like '7%') update ban_temp set nom_voie=nom_cadastre from u where id=u_id;
-with u as (select b.id as u_id, f.nom_cadastre from ban_temp b join dgfip_noms_cadastre f on (f.fantoir like b.code_insee||b.id_fantoir||'%') where id_fantoir !='' and nom_voie||nom_ld||alias='' and b.code_insee like '8%' and f.fantoir like '8%') update ban_temp set nom_voie=nom_cadastre from u where id=u_id;
-with u as (select b.id as u_id, f.nom_cadastre from ban_temp b join dgfip_noms_cadastre f on (f.fantoir like b.code_insee||b.id_fantoir||'%') where id_fantoir !='' and nom_voie||nom_ld||alias='' and b.code_insee like '9%' and f.fantoir like '9%') update ban_temp set nom_voie=nom_cadastre from u where id=u_id;
+with u as (select b.id as u_id, f.nom_cadastre from ban_temp b join dgfip_noms_cadastre f on (f.fantoir like b.code_insee||b.id_fantoir||'%') where id_fantoir !='' and nom_voie||nom_ld||alias='') update ban_temp set nom_voie=nom_cadastre from u where id=u_id;
 
+-- nom_voie et nom_ld identiques
+update ban_temp set nom_ld='' where nom_ld !='' and unaccent(lower(nom_voie))=unaccent(lower(nom_ld));
+
+-- nom_voie vide + nom_ld present + FANTOIR indique LD
+update ban_temp set nom_voie=nom_ld, nom_ld='' where nom_voie='' and nom_ld !='' and id_fantoir LIKE 'B%';
+
+-- nom_voie et alias identiques
+update ban_temp set alias='' where alias !='' and unaccent(lower(nom_voie))=unaccent(lower(alias));
+
+-- nom_ld et alias identiques
+update ban_temp set nom_ld=alias, alias='' where nom_ld !='' and replace(lower(unaccent(nom_ld)),'-',' ')=replace(lower(unaccent(alias)),'-',' ');
+
+-- nom_voie contient des double tirets
+update ban_temp set nom_voie=replace(nom_voie,'--','-') where nom_voie like '%--%';
+
+-- nom_voie avec tiret/espace (ex: "Chemin Saint- Victor")
+update ban_temp set nom_voie=regexp_replace(nom_voie,'([^ ])- ','\1-') where nom_voie like '%- %';
+update ban_temp set nom_voie=regexp_replace(nom_voie,' -([^ ])','-\1') where nom_voie like '% -%';
+
+-- calcul nom_temp, version abbrégée de nom_voie pour rapprochement FANTOIR
+alter table ban_temp add nom_temp text;
+update ban_temp set nom_temp=regexp_replace(replace(replace(upper(unaccent(nom_voie)),'-',' '),chr(39),' '),' *',' ') where id_fantoir='' and nom_voie!='';
+with u as (select * from abbrev where txt_long != txt_court ORDER BY length(txt_long) DESC) update ban_temp set nom_temp=regexp_replace(nom_temp,'(^| )'||txt_long||'( |$)','\1'||txt_court||'\2') from u where nom_temp LIKE '%'||txt_long||'%' ;
+
+-- test de rapprochement
+-- select b.code_insee, nom_voie, nom_temp, string_agg(distinct(f.id_voie),',') as code, count(distinct(f.id_voie)) as nb, string_agg(distinct(m.id_voie),',') as mot, string_agg(distinct(m.nature_voie||' '||m.libelle_voie),',') from ban_temp b left join dgfip_fantoir f on (b.code_insee=f.code_insee and nom_temp=replace(replace(replace(replace(trim(f.nature_voie||' '||f.libelle_voie),chr(39),' '),'-',' '),'.',' '),'  ',' ')) left join dgfip_fantoir m on (b.code_insee=m.code_insee and nom_temp LIKE '% '||m.dernier_mot) where nom_temp is not null and id_fantoir='' and b.code_insee like '0%' group by 1,2,3;
+
+-- mise à jour id_fantoir à partir de nom_temp, version abbrégée de nom_voie
+with u as (select b.code_insee as u_insee, nom_temp as u_nom, string_agg(distinct(f.id_voie),',') as u_code, count(distinct(f.id_voie)) as u_nb from ban_temp b left join dgfip_fantoir f on (b.code_insee=f.code_insee and f.date_annul='0000000' and nom_temp=replace(replace(replace(replace(trim(f.nature_voie||' '||f.libelle_voie),chr(39),' '),'-',' '),'.',' '),'  ',' ')) where nom_temp is not null and id_fantoir='' group by 1,2) update ban_temp set id_fantoir=u_code, nom_temp = null from u where code_insee=u_insee and nom_temp=u_nom and u_nb=1;
+
+-- test de rapprochement
+-- select b.code_insee, nom_ld, nom_temp, string_agg(distinct(f.id_voie),',') as code, count(distinct(f.id_voie)) as nb, string_agg(distinct(m.id_voie),',') as mot, string_agg(distinct(m.nature_voie||' '||m.libelle_voie),',') from ban_temp b left join dgfip_fantoir f on (b.code_insee=f.code_insee and nom_ld=replace(replace(replace(replace(trim(f.nature_voie||' '||f.libelle_voie),chr(39),' '),'-',' '),'.',' '),'  ',' ')) left join dgfip_fantoir m on (b.code_insee=m.code_insee and nom_ld LIKE '% '||m.dernier_mot) where nom_voie='' and nom_ld!='' and id_fantoir='' and b.code_insee like '0%' group by 1,2,3 order by code ;
+
+-- mise à jour id_fantoir par rapprochement avec nom_ld
+with u as (select b.code_insee as u_insee, nom_ld as u_nom, string_agg(distinct(f.id_voie),',') as u_code, count(distinct(f.id_voie)) as u_nb from ban_temp b left join dgfip_fantoir f on (b.code_insee=f.code_insee and f.date_annul='0000000' and nom_ld=replace(replace(replace(replace(trim(f.nature_voie||' '||f.libelle_voie),chr(39),' '),'-',' '),'.',' '),'  ',' ')) where nom_voie='' and nom_ld!='' and id_fantoir='' group by 1,2) update ban_temp set id_fantoir=u_code from u where code_insee=u_insee and nom_ld=u_nom and u_nb=1 and u_code ~ '^[ABX]';
+with u as (select b.code_insee as u_insee, nom_ld as u_nom, string_agg(distinct(f.id_voie),',') as u_code, count(distinct(f.id_voie)) as u_nb from ban_temp b left join dgfip_fantoir f on (b.code_insee=f.code_insee and nom_ld=replace(replace(replace(replace(trim(f.nature_voie||' '||f.libelle_voie),chr(39),' '),'-',' '),'.',' '),'  ',' ')) where nom_voie='' and nom_ld!='' and id_fantoir='' group by 1,2) update ban_temp set id_fantoir=u_code from u where code_insee=u_insee and nom_ld=u_nom and u_nb=1 and u_code ~ '^[ABX]';
+
+-- mise en forme nom_voie (capitalisation sauf articles)
+update ban_temp set nom_voie=replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(initcap(nom_voie),' Du ',' du '),' De ',' de '),' Le ',' le '),' La ',' la '),' Des ',' des '),' L'||chr(39),' l'||chr(39)),' D'||chr(39),' d'||chr(39)),' Au ',' au '),' Aux ',' aux '),' À ',' à '),' Et ',' et '),' Dit ',' dit '),' Dite ',' dite '),' En ',' en '),' Les ',' les '),' Ou ',' ou ');
+
+-- chiffres romains en majuscule... II III IV VI VII VIII XII XV XIV XXIII
+update ban_temp set nom_voie=regexp_replace(regexp_replace(regexp_replace(regexp_replace(regexp_replace(regexp_replace( regexp_replace(regexp_replace(regexp_replace(regexp_replace(nom_voie,' Ii( |$)',' II\1'), ' Iii( |$)',' III\1'),' Iv( |$)',' IV\1'),' Vi( |$)',' VI\1'),' Vii( |$)',' VII\1'),' Viii( |$)',' VIII\1'),' Xii( |$)',' XII\1'),' Xv( |$)',' XV\1'),' Xiv( |$)',' XIV\1'),' Xxiii( |$)',' XXIII\1') where nom_voie != '' and nom_voie ~ '(^| )[IXV][ixv]*( |$)';
+
+-- Saint et Sainte avec tiret
+update ban_temp set nom_voie=replace(nom_voie,'Saint ','Saint-') where nom_voie ~ 'Saint ';
+update ban_temp set nom_voie=replace(nom_voie,'Sainte ','Sainte-') where nom_voie ~ 'Sainte ';
+
+-- L et D apostrophe...
+update ban_temp set nom_voie=replace(nom_voie,' D ',' d'||chr(39)) where nom_voie ~ ' D ';
+update ban_temp set nom_voie=replace(nom_voie,' L ',' l'||chr(39)) where nom_voie ~ ' L ';
+
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^RES ','RESIDENCE ') where nom_ld ~ '^RES ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^CCAL ','CENTRE COMMERCIAL ') where nom_ld ~ '^CCAL ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^TUN ','TUNNEL ') where nom_ld ~ '^TUN ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^CHT ','CHATEAU ') where nom_ld ~ '^CHT ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^LOT ','LOTISSEMENT ') where nom_ld ~ '^LOT ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^GPE ','GROUPE ') where nom_ld ~ '^GPE ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^FRM ','FERME ') where nom_ld ~ '^FRM ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^CTR ','CENTRE ') where nom_ld ~ '^CENTRE ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^DEVI ','DEVIATION ') where nom_ld ~ '^DEVIATION ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^LDT ','') where nom_ld ~ '^LDT ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^ZONE ARTISANAL ','ZONE ARTISANALE ') where nom_ld ~ '^ZONE ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,' SAINT ',' SAINT-') where nom_ld ~ ' SAINT ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,' SAINTE ',' SAINTE-') where nom_ld ~ ' SAINTE ';
 
