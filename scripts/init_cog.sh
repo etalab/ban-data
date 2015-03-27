@@ -24,4 +24,14 @@ psql -c "alter table insee_cog_2014 add column insee text; update insee_cog_2014
 psql -c "create index insee_cog_2014_insee on insee_cog_2014 using spgist(insee);"
 psql -c "update insee_cog_2014 set nccenr='Fœil' where insee='22059';" # problème d'encodage dans le fichier source ?
 
+# liste des départements (n° région, n° département, nom)
+csvcut -e iso-8859-1 -c 1,2,6 -t depts2014.txt > depts2014.csv
+psql -c "drop table if exists cog_dep;create table cog_dep (reg text, dep text, nom_dep text);"
+psql -c "\copy cog_dep from depts2014.csv with (format csv, header true);"
+psql -c "create index cog_dep_dep on cog_dep using spgist (dep);"
 
+# liste des régions (n° région nom)
+csvcut -e iso-8859-1 -c 1,5 -t reg2015.txt > reg2015.csv
+psql -c "drop table if exists cog_reg;create table cog_reg (reg text, nom_reg text);"
+psql -c "\copy cog_reg from reg2015.csv with (format csv, header true);"
+psql -c "create index cog_reg_reg on cog_reg using spgist (reg);"
