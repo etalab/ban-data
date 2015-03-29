@@ -15,6 +15,6 @@ psql -P pager -c "select left(b.code_insee,2) as dept, count(*) as nb, min(left(
 sql2csv --db "$DB" -H --query "select b.code_insee, b.id, 'id_fantoir',b.id_fantoir,'id_fantoir annule/obsolete depuis '||left(f.date_annul,4) from ban_temp b left join dgfip_fantoir f on (f.code_insee=b.code_insee and f.id_voie=b.id_fantoir) where f.date_annul!='0000000' and b.id_fantoir !=''" >> erreurs.csv
 
 echo "\n-- nom de voie+ld+alias ne contient pas le dernier mot FANTOIR\n"
-psql -c "\copy (select b.code_insee, b.id,'nom_voie+id_fantoir', nom_voie, format('nom ne contient pas dernier mot fantoir: %s (%s)',f.dernier_mot,trim(f.nature_voie||' '||f.libelle_voie)) from ban_temp b join dgfip_fantoir f on (f.code_insee=b.code_insee and f.id_voie=b.id_fantoir) where b.id_fantoir!='' and NOT upper(unaccent(b.nom_voie||' '||b.nom_ld||' '||alias)) ~ f.dernier_mot) to temp with (format csv, header false)"
+psql -c "\copy (select b.code_insee, b.id,'nom_voie+id_fantoir', nom_voie, format('nom ne contient pas dernier mot fantoir: %s (%s)',f.dernier_mot,trim(f.nature_voie||' '||f.libelle_voie)) from ban_temp b join dgfip_fantoir f on (f.code_insee=b.code_insee and f.id_voie=b.id_fantoir) where b.id_fantoir!='' and NOT upper(unaccent(b.nom_voie||' '||b.nom_ld||' '||alias)) ~ replace(f.dernier_mot,'*','')) to temp with (format csv, header false)"
 cat temp >> erreurs.csv
 
