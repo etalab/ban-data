@@ -47,7 +47,7 @@ case when (coalesce(nom_voie,'') !='' and coalesce(nom_ld,'') !='' and replace(u
 code_post,
 round(avg(lat::numeric),6) as lat,
 round(avg(lon::numeric),6) as lon,
-nom_commune,
+regexp_replace(nom_commune,' [0-9].*',''),
 nom_dep,
 nom_reg,
 case when id_fantoir > '9999' then 'place' else 'street' end as type,
