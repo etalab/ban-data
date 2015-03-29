@@ -1,5 +1,5 @@
 cd ../data/ign
-psql -c "CREATE TABLE IF NOT EXISTS ban_temp (
+psql -qc "drop table if exists ban_temp; CREATE TABLE ban_temp (
 	id TEXT,
 	nom_voie TEXT, 
 	id_fantoir TEXT, 
@@ -14,9 +14,11 @@ psql -c "CREATE TABLE IF NOT EXISTS ban_temp (
 	lon FLOAT NOT NULL, 
 	lat FLOAT NOT NULL, 
 	nom_commune TEXT
-); TRUNCATE ban_temp;"
+);"
 for f in *odbl*.csv; do
-	psql -c "\copy ban_temp from $f with (format csv, delimiter ';', header true);"
+	echo $f
+	tail -n +2 $f | sort -u > temp
+	psql -c "\copy ban_temp from temp with (format csv, delimiter ';', header false);"
 done
 
 psql -c "
