@@ -6,6 +6,9 @@ with u as (select id, code_insee, code_post, string_agg(distinct(p.cp),',') as c
 -- nom_ld: suppression des *NOBDUNI*
 update ban_temp set nom_ld=replace(nom_ld,'*NOBDUNI*','') where nom_ld like '*NOBDUNI*%';
 
+-- supression nom_ld si déjà contenu dans nom_voie
+update ban_temp set nom_ld='' where nom_ld !='' and lower(unaccent(nom_voie))~lower(unaccent(nom_ld));
+
 -- nom_voie: "nom_voie contient / avec valeurs repetees"
 with u as (select id as u_id,regexp_replace(nom_voie,'^(.*)/\1$','\1') as u_nom from ban_temp where nom_voie ~ '^(.*)/\1$') update ban_temp set nom_voie=u_nom from u where id=u_id;
 
