@@ -1,6 +1,6 @@
 # convert_ban2json.sh departement
 
-echo "`date +%H:%m:%S` Import postgres dept $1"
+echo "`date +%H:%M:%S` Import postgres dept $1"
 psql -qc "
 drop table if exists ban_$1; 
 CREATE TABLE ban_$1 (
@@ -24,7 +24,7 @@ tail -n +2 ../data/ign/*odbl*_$1.csv | sort -u > temp_$1
 psql -c "\copy ban_$1 from temp_$1 with (format csv, delimiter ';', header false);"
 rm temp_$1
 
-echo "`date +%H:%m:%S` Conformation et indexation dept $1"
+echo "`date +%H:%M:%S` Conformation et indexation dept $1"
 psql -qc "
 -- mise à jour des noms de voie, lieu-dit ou alias nuls
 update ban_$1 set nom_voie='' where nom_voie is null;
@@ -37,12 +37,12 @@ create index ban_$1_id on ban_$1 using spgist(id);
 create index ban_$1_insee on ban_$1 using spgist(code_insee);
 "
 
-echo "`date +%H:%m:%S` Harmonisation dept $1"
+echo "`date +%H:%M:%S` Harmonisation dept $1"
 sed "s/ban_temp/ban_$1/g" clean.sql > clean_$1.sql
 psql -q < clean_$1.sql
 rm clean_$1.sql
 
-echo "`date +%H:%m:%S` Export JSON dept $1"
+echo "`date +%H:%M:%S` Export JSON dept $1"
 # export postgres vers json pour addok des adresses
 psql --no-align --tuples-only -qc "
 select format('{\"id\":\"%s_%s\",\"type\":\"%s\",\"name\":\"%s\",\"postcode\":\"%s\",\"lon\":%s,\"lat\": %s,\"city\":\"%s\",\"departement\":\"%s\",\"region\":\"%s\",\"importance\":%s,\"housenumbers\":{%s}}',code_insee, id_fantoir, type, nom_voie, code_post, lat, lon, nom_commune, nom_dep, nom_reg, importance, housenumbers)
@@ -66,4 +66,4 @@ join cog_reg r on (r.reg=d.reg)
 group by 1,2,3,4,7,8,9,10,g.statut,g.population,nom_voie
 order by 1,2,3) as d;
 " > ../out/ban-odbl-$1.json
-echo "`date +%H:%m:%S` Terminé dept $1"
+echo "`date +%H:%M:%S` Terminé dept $1"
