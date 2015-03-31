@@ -42,7 +42,7 @@ echo "\n-- vérification chiffres romains en minuscule\n"
 psql -P pager -c "select nom_voie, count(*) as nb from ban_temp where nom_voie ~ ' [ivx]*( |$)' and nom_voie !~ 'vi?[vx]' group by 1 order by 2 desc;"
 
 echo "\n-- vérification de présence d'abbréviations résiduelles\n"
-for a in `csvcut ../data/abbrev.txt --columns 1 | tail -n +2 | tr '[:upper:]' '[:lower:]' | tr '_' '\ '`
+for a in `csvcut ../data/abbrev.txt --columns 1 | tail -n +2 | tr '[:upper:]' '[:lower:]' | tr '_' '\ ' | sort -u`
 do
 echo "  abrev: $a"
 # psql -P pager -c "select nom_voie, count(*) as nb, left(string_agg(distinct(code_insee),','),60) as exemple from ban_temp where nom_voie ~ '(^| )$a( |$)' group by 1 order by 2 desc;"
