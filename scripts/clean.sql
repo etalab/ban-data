@@ -97,17 +97,11 @@ update ban_temp set nom_voie=regexp_replace(nom_voie,'grand.rue (grande.rue)','\
 -- nom_voie + nom_ld + alias est vide > reprise du nom d'après noms issus des plans cadastraux (algo BANO)
 with u as (select b.id as u_id, f.nom_cadastre from ban_temp b join dgfip_noms_cadastre f on (f.fantoir like b.code_insee||b.id_fantoir||'%') where id_fantoir !='' and nom_voie||nom_ld||alias='') update ban_temp set nom_voie=nom_cadastre from u where id=u_id;
 
--- nom_voie et nom_ld identiques
-update ban_temp set nom_ld='' where nom_ld !='' and unaccent(lower(nom_voie))=unaccent(lower(nom_ld));
-
 -- nom_voie vide + nom_ld present + FANTOIR indique LD
 update ban_temp set nom_voie=nom_ld, nom_ld='' where nom_voie='' and nom_ld !='' and id_fantoir LIKE 'B%';
 
 -- nom_voie et alias identiques
 update ban_temp set alias='' where alias !='' and unaccent(lower(nom_voie))=unaccent(lower(alias));
-
--- nom_ld et alias identiques
-update ban_temp set nom_ld=alias, alias='' where nom_ld !='' and replace(lower(unaccent(nom_ld)),'-',' ')=replace(lower(unaccent(alias)),'-',' ');
 
 -- nom_voie contient des double tirets
 update ban_temp set nom_voie=replace(nom_voie,'--','-') where nom_voie like '%--%';
@@ -148,17 +142,45 @@ update ban_temp set nom_voie=replace(nom_voie,'Sainte ','Sainte-') where nom_voi
 update ban_temp set nom_voie=replace(nom_voie,' D ',' d'||chr(39)) where nom_voie ~ ' D ';
 update ban_temp set nom_voie=replace(nom_voie,' L ',' l'||chr(39)) where nom_voie ~ ' L ';
 
-update ban_temp set nom_ld=regexp_replace(nom_ld,'^RES ','RESIDENCE ') where nom_ld ~ '^RES ';
-update ban_temp set nom_ld=regexp_replace(nom_ld,'^CCAL ','CENTRE COMMERCIAL ') where nom_ld ~ '^CCAL ';
-update ban_temp set nom_ld=regexp_replace(nom_ld,'^TUN ','TUNNEL ') where nom_ld ~ '^TUN ';
-update ban_temp set nom_ld=regexp_replace(nom_ld,'^CHT ','CHATEAU ') where nom_ld ~ '^CHT ';
+-- nom_ld et alias identiques
+update ban_temp set nom_ld=alias, alias='' where nom_ld !='' and replace(lower(unaccent(nom_ld)),'-',' ')=replace(lower(unaccent(alias)),'-',' ');
+
+-- nom_voie et nom_ld identiques
+update ban_temp set nom_ld='' where nom_ld !='' and unaccent(lower(nom_voie))=unaccent(lower(nom_ld));
+
+-- désabreviation de nom_ld
 update ban_temp set nom_ld=regexp_replace(nom_ld,'^LOT ','LOTISSEMENT ') where nom_ld ~ '^LOT ';
-update ban_temp set nom_ld=regexp_replace(nom_ld,'^GPE ','GROUPE ') where nom_ld ~ '^GPE ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^RES ','RESIDENCE ') where nom_ld ~ '^RES ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^HAM ','HAMEAU ') where nom_ld ~ '^HAM ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^VGE ','VILLAGE ') where nom_ld ~ '^VGE ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^DOM ','DOMAINE ') where nom_ld ~ '^DOM ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^VLA ','VILLA ') where nom_ld ~ '^VLA ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^MLN ','MOULIN ') where nom_ld ~ '^MLN ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^CHT ','CHATEAU ') where nom_ld ~ '^CHT ';
 update ban_temp set nom_ld=regexp_replace(nom_ld,'^FRM ','FERME ') where nom_ld ~ '^FRM ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^BRG ','BOURG ') where nom_ld ~ '^BRG ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^IMM ','IMMEUBLE ') where nom_ld ~ '^IMMEUBLE ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^CCAL ','CENTRE COMMERCIAL ') where nom_ld ~ '^CCAL ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^PTE ','PORTE ') where nom_ld ~ '^PTE ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^ETNG ','ETANG ') where nom_ld ~ '^ETNG ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^LDT ','') where nom_ld ~ '^LDT ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^PKG ','PARKING ') where nom_ld ~ '^PKG ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^ST[ -] ','SAINT-') where nom_ld ~ '^ST[ -]';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^STE[ -] ','SAINTE-') where nom_ld ~ '^STE[ -]';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^TUN ','TUNNEL ') where nom_ld ~ '^TUN ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^GDE ','GRANDE ') where nom_ld ~ '^GDE ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^GD ','GRAND ') where nom_ld ~ '^GD ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^GPE ','GROUPE ') where nom_ld ~ '^GPE ';
 update ban_temp set nom_ld=regexp_replace(nom_ld,'^CTR ','CENTRE ') where nom_ld ~ '^CENTRE ';
 update ban_temp set nom_ld=regexp_replace(nom_ld,'^DEVI ','DEVIATION ') where nom_ld ~ '^DEVIATION ';
-update ban_temp set nom_ld=regexp_replace(nom_ld,'^LDT ','') where nom_ld ~ '^LDT ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^ECL ','ECLUSE ') where nom_ld ~ '^ECL ';
 update ban_temp set nom_ld=regexp_replace(nom_ld,'^ZONE ARTISANAL ','ZONE ARTISANALE ') where nom_ld ~ '^ZONE ';
 update ban_temp set nom_ld=regexp_replace(nom_ld,' SAINT ',' SAINT-') where nom_ld ~ ' SAINT ';
 update ban_temp set nom_ld=regexp_replace(nom_ld,' SAINTE ',' SAINTE-') where nom_ld ~ ' SAINTE ';
+
+-- nom_ld et alias identiques (après désabréviation de nom_ld)
+update ban_temp set nom_ld=alias, alias='' where nom_ld !='' and replace(lower(unaccent(nom_ld)),'-',' ')=replace(lower(unaccent(alias)),'-',' ');
+
+-- nom_voie et nom_ld identiques (après désabréviation de nom_ld)
+update ban_temp set nom_ld='' where nom_ld !='' and unaccent(lower(nom_voie))=unaccent(lower(nom_ld));
 
