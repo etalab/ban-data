@@ -72,6 +72,9 @@ select nom_voie, left(string_agg(distinct(code_insee),','),60) as exemple from b
 "
 sql2csv --db "$DB" -H --query "select code_insee,id,'nom_voie',nom_voie,'nom comportant des tirets' from ban_temp where nom_voie ~ ' -' or nom_voie ~ '- ' or nom_voie ~ '--' " >> erreurs.csv
 
+echo "\n-- noms comportant des |\n"
+sql2csv --db "$DB" -H --query "select code_insee,id,'nom_voie',nom_voie,'nom comportant des |' from ban_temp where nom_voie LIKE '%|%' " >> erreurs.csv
+
 echo "\n-- noms comportant des caractères étranges\n"
 psql -P pager -c "
 select nom_voie, left(string_agg(distinct(code_insee),','),60) as exemple from ban_temp where lower(unaccent(nom_voie)) !~ '[a-z0-9\-\/\(\)]' group by 1 order by 1;
