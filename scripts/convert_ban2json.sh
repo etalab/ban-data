@@ -2,23 +2,10 @@
 
 echo "`date +%H:%M:%S` Import postgres dept $1"
 psql -qc "
+CREATE TABLE IF NOT EXISTS ban_full (id TEXT,nom_voie TEXT, id_fantoir TEXT, numero TEXT,rep TEXT, code_insee TEXT, code_post TEXT,alias TEXT, nom_ld TEXT, x FLOAT NOT NULL, y FLOAT NOT NULL,lat FLOAT NOT NULL, lon FLOAT NOT NULL,nom_commune TEXT);
 drop table if exists ban_$1; 
-CREATE TABLE ban_$1 (
-	id TEXT,
-	nom_voie TEXT, 
-	id_fantoir TEXT, 
-	numero TEXT, 
-	rep TEXT, 
-	code_insee TEXT, 
-	code_post TEXT, 
-	alias TEXT, 
-	nom_ld TEXT, 
-	x FLOAT NOT NULL, 
-	y FLOAT NOT NULL, 
-	lat FLOAT NOT NULL, 
-	lon FLOAT NOT NULL, 
-	nom_commune TEXT
-);"
+CREATE TABLE ban_$1 inherit ban_full;
+"
 
 tail -n +2 ../data/ign/*odbl*_$1.csv | sort -u > temp_$1
 psql -c "\copy ban_$1 from temp_$1 with (format csv, delimiter ';', header false);"
@@ -35,6 +22,7 @@ update ban_$1 set id_fantoir='' where id_fantoir is null;
 -- création des index
 create index ban_$1_id on ban_$1 using spgist(id);
 create index ban_$1_insee on ban_$1 using spgist(code_insee);
+create index ban_$1_fantoir on ban_$1 using spgist(code_insee,id_fantoir);
 "
 
 echo "`date +%H:%M:%S` Harmonisation dept $1"
