@@ -1,17 +1,18 @@
 type,nb_err
-numero en 5xxx,3569524
+numero en 5xxx,3569510
 nom_voie contient nom_ld,2638465
 nom_voie et nom_ld identiques ,2544216
-id_fantoir est vide,1530777
+id_fantoir est vide,1530765
 numero+rep en doublons,1503970
 nom_voie vide + nom_ld present + FANTOIR indique LD,1170152
 numero en 9xxx,828562
-nom ne contient pas dernier mot fantoir,642558
+nom ne contient pas dernier mot fantoir,642554
+nom_commune et nom_ld identiques,141729
 numero commence par ,110614
 nom_voie et nom_ld vide,88448
 erreur accentuation,40991
 nom_voie contient /,37753
-abbreviation residuelle,26456
+abbreviation residuelle,22992
 aucun nom ni code fantoir,20951
 id_fantoir annule/obsolete depuis ,20746
 code_post est vide,16640
@@ -24,6 +25,6 @@ id_fantoir inconnu,1222
 nom comportant des tirets,195
 id en double,189
 nom comportant des caracteres non alpha-num,167
-code_post inconnu,18
+code_post inconnu,9
 nom_ld et alias identiques ,7
 rep en minuscule,4
