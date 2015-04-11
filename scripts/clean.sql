@@ -151,6 +151,9 @@ update ban_temp set nom_ld='' where nom_ld !='' and unaccent(lower(nom_voie))=un
 -- nom_ld et nom_commune identiques (avant désabréviation de nom_ld)
 update ban_temp set nom_ld='' where nom_ld !='' and replace(replace(unaccent(lower(nom_commune)),'-',' '),chr(39),' ')=replace(replace(lower(nom_ld),'-',' '),chr(39),' ');
 
+-- nom_ld avec premier mot doublé (avant désabréviation)
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^([A-Z]*) \1( |$)','\1\2') where nom_ld!='' and nom_ld ~ '^([A-Z]*) \1( |$)';
+
 -- désabreviation de nom_ld
 update ban_temp set nom_ld=regexp_replace(nom_ld,'^LOT ','LOTISSEMENT ') where nom_ld ~ '^LOT ';
 update ban_temp set nom_ld=regexp_replace(nom_ld,'^RES ','RESIDENCE ') where nom_ld ~ '^RES ';
@@ -193,3 +196,5 @@ update ban_temp set nom_ld='' where nom_ld !='' and unaccent(lower(nom_voie))=un
 -- nom_ld et nom_commune identiques (après désabréviation de nom_ld)
 update ban_temp set nom_ld='' where nom_ld !='' and replace(replace(unaccent(lower(nom_commune)),'-',' '),chr(39),' ')=replace(replace(lower(nom_ld),'-',' '),chr(39),' ');
 
+-- nom_ld avec premier mot doublé (après désabréviation)
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^([A-Z]*) \1( |$)','\1\2') where nom_ld!='' and nom_ld ~ '^([A-Z]*) \1( |$)';
