@@ -91,7 +91,17 @@ psql -c "\copy (select code_insee,id,'nom_voie',nom_voie,'nom_voie et alias iden
 echo "\n-- nom_ld et alias identiques"
 psql -c "\copy (select code_insee,id,'nom_ld',nom_ld,'nom_ld et alias identiques : '||alias from ban_temp where nom_ld !='' and replace(lower(unaccent(nom_ld)),'-',' ')=replace(lower(unaccent(alias)),'-',' ')) to temp with (format csv, header false);"; cat temp >> erreurs.csv
 
+echo "\n-- nom_ld avec premier mot doublé"
+psql -c "\copy (select code_insee,id,'nom_ld',nom_ld,'nom_ld avec premier mot double' from ban_temp where nom_ld !='' and nom_ld ~ '^([A-Z]*) \1( |$)') to temp with (format csv, header false);"; cat temp >> erreurs.csv
+
 echo "\n-- nom_voie vide, nom_ld present et FANTOIR indique LD"
 psql -c "\copy (select code_insee,id,'nom_ld',nom_ld,'nom_voie vide + nom_ld present + FANTOIR indique LD' from ban_temp where nom_voie='' and nom_ld !='' and id_fantoir LIKE 'B%') to temp with (format csv, header false);"; cat temp >> erreurs.csv
 
+echo "\n-- nom_ld absence probable d'apostrophe apres L"
+psql -c "\copy (select code_insee,id,'nom_ld',nom_ld,'absence apostrophe probable' from ban_temp where nom_ld !='' and nom_ld ~ '(^| )(D|L|QU|PRESQU) [AEIOUYH]') to temp with (format csv, header false);"; cat temp >> erreurs.csv
+psql -c "\copy (select code_insee,id,'nom_ld',nom_ld,'absence apostrophe probable' from ban_temp where nom_ld !='' and nom_ld ~ ' S IL ') to temp with (format csv, header false);"; cat temp >> erreurs.csv
+
+
+# nom_ld à 26 caractères...
+# absence probable d'apostrophe
 
