@@ -14,5 +14,5 @@ echo "\n-- nom_commune ne correspond pas au COG 2014\n"
 sql2csv --db "$DB" -H --query "select b.code_insee, b.id, 'nom_commune', b.nom_commune, 'nom_commune ne correspond pas au COG 2014: ' || trim(replace(replace(c.artmin||' '||c.nccenr,'(',''),')','')) from ban_temp b left join insee_cog_2014 c on (c.insee=b.code_insee) where trim(replace(replace(c.artmin||c.nccenr,'(',''),')','')) != replace(b.nom_commune,' ','') and NOT b.nom_commune ~ 'rondissement$'" >> erreurs.csv
 
 echo "\n-- nom_commune = nom_ld"
-sql2csv --db "$DB" -H --query "select b.code_insee, b.id, 'nom_commune', b.nom_commune, 'nom_commune identique à nom_ld: ' || nom_ld from ban_temp b where nom_ld !='' and lower(nom_ld)=replace(lower(unaccent(nom_commune)),'-',' ')" >> erreurs.csv
+sql2csv --db "$DB" -H --query "select b.code_insee, b.id, 'nom_commune', b.nom_commune, 'nom_commune et nom_ld identiques: ' || nom_ld from ban_temp b where nom_ld !='' and replace(replace(unaccent(lower(nom_commune)),'-',' '),chr(39),' ')=replace(replace(lower(nom_ld),'-',' '),chr(39),' ')" >> erreurs.csv
 
