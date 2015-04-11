@@ -178,6 +178,9 @@ update ban_temp set nom_ld=regexp_replace(nom_ld,'^ZONE ARTISANAL ','ZONE ARTISA
 update ban_temp set nom_ld=regexp_replace(nom_ld,' SAINT ',' SAINT-') where nom_ld ~ ' SAINT ';
 update ban_temp set nom_ld=regexp_replace(nom_ld,' SAINTE ',' SAINTE-') where nom_ld ~ ' SAINTE ';
 
+-- apostrophes manquantes
+update ban_temp set nom_ld=regexp_replace(nom_ld,'(^| )(D|L|QU|PRESQU) ([AEIOUYH])','\1\2'||chr(39)||'\3','g') where nom_ld ~ '(^| )(D|L|QU|PRESQU) [AEIOUYH]';
+
 -- nom_ld et alias identiques (après désabréviation de nom_ld)
 update ban_temp set nom_ld=alias, alias='' where nom_ld !='' and replace(lower(unaccent(nom_ld)),'-',' ')=replace(lower(unaccent(alias)),'-',' ');
 
