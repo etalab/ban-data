@@ -148,6 +148,9 @@ update ban_temp set nom_ld=alias, alias='' where nom_ld !='' and replace(lower(u
 -- nom_voie et nom_ld identiques
 update ban_temp set nom_ld='' where nom_ld !='' and unaccent(lower(nom_voie))=unaccent(lower(nom_ld));
 
+-- nom_ld et nom_commune identiques (avant désabréviation de nom_ld)
+update ban_temp set nom_ld='' where nom_ld !='' and replace(replace(unaccent(lower(nom_commune)),'-',' '),chr(39),' ')=replace(replace(lower(nom_ld),'-',' '),chr(39),' ');
+
 -- désabreviation de nom_ld
 update ban_temp set nom_ld=regexp_replace(nom_ld,'^LOT ','LOTISSEMENT ') where nom_ld ~ '^LOT ';
 update ban_temp set nom_ld=regexp_replace(nom_ld,'^RES ','RESIDENCE ') where nom_ld ~ '^RES ';
@@ -186,4 +189,7 @@ update ban_temp set nom_ld=alias, alias='' where nom_ld !='' and replace(lower(u
 
 -- nom_voie et nom_ld identiques (après désabréviation de nom_ld)
 update ban_temp set nom_ld='' where nom_ld !='' and unaccent(lower(nom_voie))=unaccent(lower(nom_ld));
+
+-- nom_ld et nom_commune identiques (après désabréviation de nom_ld)
+update ban_temp set nom_ld='' where nom_ld !='' and replace(replace(unaccent(lower(nom_commune)),'-',' '),chr(39),' ')=replace(replace(lower(nom_ld),'-',' '),chr(39),' ');
 
