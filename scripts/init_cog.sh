@@ -35,3 +35,18 @@ csvcut -e iso-8859-1 -c 1,5 -t reg2015.txt > reg2015.csv
 psql -c "drop table if exists cog_reg;create table cog_reg (reg text, nom_reg text);"
 psql -c "\copy cog_reg from reg2015.csv with (format csv, header true);"
 psql -c "create index cog_reg_reg on cog_reg using spgist (reg);"
+
+# COG 2015 de l'INSEE
+wget -nc http://www.insee.fr/fr/methodes/nomenclatures/cog/telechargement/2015/txt/comsimp2015.zip
+unzip -o comsimp2015.zip
+# conversion en CSV UTF-8
+cat comsimp2015.txt | iconv -f iso88591 -t utf8 | tr '\t' ',' > comsimp2015.csv
+
+psql -c "drop table if exists insee_cog_2015;create table insee_cog_2015 (CDC text,CHEFLIEU text,REG text,DEP text,COM text,AR text,CT text,TNCC text,ARTMAJ text,NCC text,ARTMIN text,NCCENR text);"
+psql -c "\copy insee_cog_2015 from comsimp2015.csv with (format csv, header true);"
+psql -c "alter table insee_cog_2015 add column insee text; update insee_cog_2015 set insee=dep||com;"
+psql -c "create index insee_cog_2015_insee on insee_cog_2015 using spgist(insee);"
+psql -c "update insee_cog_2015 set nccenr='Fœil' where insee='22059';" # problème d'encodage dans le fichier source ?
+
+
+
