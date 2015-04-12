@@ -112,8 +112,11 @@ update ban_temp set nom_voie=regexp_replace(nom_voie,' -([^ ])','-\1') where nom
 
 -- calcul nom_temp, version abbrégée de nom_voie pour rapprochement FANTOIR
 alter table ban_temp add nom_temp text;
-update ban_temp set nom_temp=regexp_replace(replace(replace(upper(unaccent(nom_voie)),'-',' '),chr(39),' '),' *',' ') where id_fantoir='' and nom_voie!='';
-with u as (select * from abbrev where txt_long != txt_court ORDER BY length(txt_long) DESC) update ban_temp set nom_temp=regexp_replace(nom_temp,'(^| )'||txt_long||'( |$)','\1'||txt_court||'\2') from u where nom_temp LIKE '%'||txt_long||'%' ;
+update ban_temp set nom_temp=regexp_replace(replace(replace(upper(unaccent(nom_voie)),'-',' '),chr(39),' '),' +',' ','g') where nom_voie!='';
+with u as (select * from abbrev where txt_long != txt_court ORDER BY length(txt_long) DESC) update ban_temp set nom_temp=regexp_replace(nom_temp,'(^| )'||txt_long||'( |$)','\1'||txt_court||'\2','g') from u where nom_temp LIKE '%'||txt_long||'%' ;
+with u as (select * from abbrev where txt_long != txt_court ORDER BY length(txt_long) DESC) update ban_temp set nom_temp=regexp_replace(nom_temp,'(^| )'||txt_long||'( |$)','\1'||txt_court||'\2','g') from u where nom_temp LIKE '%'||txt_long||'%' ;
+with u as (select * from abbrev where txt_long != txt_court ORDER BY length(txt_long) DESC) update ban_temp set nom_temp=regexp_replace(nom_temp,'(^| )'||txt_long||'( |$)','\1'||txt_court||'\2','g') from u where nom_temp LIKE '%'||txt_long||'%' ;
+with u as (select * from abbrev where txt_long != txt_court ORDER BY length(txt_long) DESC) update ban_temp set nom_temp=regexp_replace(nom_temp,'(^| )'||txt_long||'( |$)','\1'||txt_court||'\2','g') from u where nom_temp LIKE '%'||txt_long||'%' ;
 
 -- test de rapprochement
 -- select b.code_insee, nom_voie, nom_temp, string_agg(distinct(f.id_voie),',') as code, count(distinct(f.id_voie)) as nb, string_agg(distinct(m.id_voie),',') as mot, string_agg(distinct(m.nature_voie||' '||m.libelle_voie),',') from ban_temp b left join dgfip_fantoir f on (b.code_insee=f.code_insee and nom_temp=replace(replace(replace(replace(trim(f.nature_voie||' '||f.libelle_voie),chr(39),' '),'-',' '),'.',' '),'  ',' ')) left join dgfip_fantoir m on (b.code_insee=m.code_insee and nom_temp LIKE '% '||m.dernier_mot) where nom_temp is not null and id_fantoir='' and b.code_insee like '0%' group by 1,2,3;
@@ -200,7 +203,7 @@ update ban_temp set nom_ld=regexp_replace(nom_ld,'DSU ','DESSUS ') where nom_ld 
 update ban_temp set nom_ld=regexp_replace(nom_ld,'DSO ','DESSOUS ') where nom_ld ~ 'DSO ';
 update ban_temp set nom_ld=regexp_replace(nom_ld,'^ABE  ','ABBAYE ') where nom_ld ~ '^ABE ';
 
--- non traités: BSN CLOI PN PLN AMI CHP CGNE COLI PLT FON MAN ZAV ENC PNT MLN GARN MF HIP CHL GRI PAL BRE BRD PCE
+-- non traités: BSN CLOI PN PLN AMI CGNE COLI PLT FON MAN ZAV ENC PNT MLN GARN MF HIP CHL GRI PAL BRE BRD PCE
 
 -- apostrophes manquantes
 update ban_temp set nom_ld=regexp_replace(nom_ld,'(^| )(D|L|QU|PRESQU) ([AEIOUYH])','\1\2'||chr(39)||'\3','g') where nom_ld ~ '(^| )(D|L|QU|PRESQU) [AEIOUYH]';
@@ -216,3 +219,32 @@ update ban_temp set nom_ld='' where nom_ld !='' and replace(replace(unaccent(low
 
 -- nom_ld avec premier mot doublé (après désabréviation)
 update ban_temp set nom_ld=regexp_replace(nom_ld,'^([A-Z]*) \1( |$)','\1\2') where nom_ld!='' and nom_ld ~ '^([A-Z]*) \1( |$)';
+
+-- mise à jour code fantoir manquant d'après nom_ld identique
+with u as (select b.*, f2.id_voie from (select b.code_insee, nom_ld from ban_temp b where id_fantoir='' and nom_voie='' and nom_ld !='' group by 1,2) as b join dgfip_fantoir f2 on (f2.code_insee=b.code_insee and replace(replace(b.nom_ld,'-',' '),chr(39),' ') = replace(replace(trim(f2.nature_voie||' '||f2.libelle_voie),'-',' '),chr(39),' ') and f2.date_annul='0000000')) update ban_temp b set id_fantoir=u.id_voie from u where b.code_insee=u.code_insee and b.id_fantoir='' and b.nom_ld=u.nom_ld;
+
+-- calcul ld_temp, version abbrégée de nom_ld pour rapprochement FANTOIR
+alter table ban_temp add ld_temp text;
+update ban_temp set ld_temp=regexp_replace(replace(replace(upper(unaccent(nom_ld)),'-',' '),chr(39),' '),' +',' ','g') where nom_ld!='';
+with u as (select * from abbrev where txt_long != txt_court ORDER BY length(txt_long) DESC) update ban_temp set ld_temp=regexp_replace(ld_temp,'(^| )'||txt_long||'( |$)','\1'||txt_court||'\2','g') from u where ld_temp LIKE '%'||txt_long||'%' ;
+with u as (select * from abbrev where txt_long != txt_court ORDER BY length(txt_long) DESC) update ban_temp set ld_temp=regexp_replace(ld_temp,'(^| )'||txt_long||'( |$)','\1'||txt_court||'\2','g') from u where ld_temp LIKE '%'||txt_long||'%' ;
+with u as (select * from abbrev where txt_long != txt_court ORDER BY length(txt_long) DESC) update ban_temp set ld_temp=regexp_replace(ld_temp,'(^| )'||txt_long||'( |$)','\1'||txt_court||'\2','g') from u where ld_temp LIKE '%'||txt_long||'%' ;
+with u as (select * from abbrev where txt_long != txt_court ORDER BY length(txt_long) DESC) update ban_temp set ld_temp=regexp_replace(ld_temp,'(^| )'||txt_long||'( |$)','\1'||txt_court||'\2','g') from u where ld_temp LIKE '%'||txt_long||'%' ;
+with u as (select * from abbrev where txt_long != txt_court ORDER BY length(txt_long) DESC) update ban_temp set ld_temp=regexp_replace(ld_temp,'(^| )'||txt_long||'( |$)','\1'||txt_court||'\2','g') from u where ld_temp LIKE '%'||txt_long||'%' ;
+
+-- tentative rapprochement
+-- select b.*, trim(regexp_replace(regexp_replace(replace(trim(f.nature_voie || ' ' || f.libelle_voie),chr(39),' '),'(^| )(LE|LA|LES|L|D|DE|DES|DU|DE LA|DE L|A|AU|AUX)( |$)',' ','g'),' +',' ','g')), f.id_voie from (select code_insee, nom_ld, ld_temp from ban_11 where ld_temp is not null and id_fantoir='' and nom_voie='' group by 1,2,3) as b left join dgfip_fantoir f on (f.code_insee=b.code_insee and b.ld_temp~f.dernier_mot) order by 1,2;
+
+-- ajout colonne pour le code FANTOIR du lieu dit
+alter table ban_temp add id_ld text;
+
+-- recherche du code FANTOIR correspondant au lieu-dit et stockage dans id_ld
+with u as (select b.*, f.id_voie from (select code_insee, nom_ld, ld_temp from ban_temp where nom_ld!='' group by 1,2,3) as b left join dgfip_fantoir f on (f.code_insee=b.code_insee and f.lib_court=coalesce(b.ld_temp,replace(replace(b.nom_ld,chr(39),' '),'-',' '))) where id_voie is not null) update ban_temp b set id_ld=u.id_voie from u where b.code_insee=u.code_insee and b.nom_ld=u.nom_ld;
+
+
+-- ajout colonne pour le code FANTOIR de la voie recalculé
+alter table ban_temp add id_voie text;
+
+-- recherche du code FANTOIR correspondant au lieu-dit et stockage dans id_ld
+with u as (select b.*, f.id_voie from (select code_insee, nom_voie, nom_temp from ban_temp where nom_voie!='' group by 1,2,3) as b left join dgfip_fantoir f on (f.code_insee=b.code_insee and f.lib_court=b.nom_temp) where id_voie is not null) update ban_temp b set id_voie=u.id_voie from u where b.code_insee=u.code_insee and b.nom_voie=u.nom_voie;
+
