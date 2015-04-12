@@ -14,4 +14,10 @@ create index dgfip_fantoir_fantoir on dgfip_fantoir (fantoir) with (fillfactor=1
 drop table dgfip_fantoir_temp;
 "
 
+# abréviation maximale pour rapprochements
+psql -c "
+alter table dgfip_fantoir add lib_court text;
+update dgfip_fantoir set lib_court=regexp_replace(replace(replace(replace(upper(unaccent(trim(nature_voie||' '||libelle_voie))),'*',' '),'-',' '),chr(39),' '),' +',' ','g');
+with u as (select * from abbrev where txt_long != txt_court ORDER BY length(txt_long) DESC) update dgfip_fantoir set lib_court=regexp_replace(lib_court,'(^| )'||txt_long||'( |$)','\1'||txt_court||'\2','g') from u where lib_court LIKE '%'||txt_long||'%' ;
+"
 
