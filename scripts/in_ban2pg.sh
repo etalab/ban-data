@@ -9,6 +9,7 @@ psql -qc "drop table if exists ban_temp; CREATE TABLE ban_temp (
 	code_post TEXT, 
 	alias TEXT, 
 	nom_ld TEXT, 
+	libelle_acheminement TEXT, 
 	x FLOAT NOT NULL, 
 	y FLOAT NOT NULL, 
 	lon FLOAT NOT NULL, 
