@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS BAN_$1;
 CREATE TABLE ban_$1 () INHERITS (ban_full);
 "
 
-unzip -jo ../data/ign/*odbl*_$1.zip -d ../data/ign/
+unzip -qjn ../data/ign/*odbl*_$1.zip -d ../data/ign/
 tail -n +2 ../data/ign/*odbl*_$1.csv | sort -u > $TEMPDIR/temp_$1
 psql -c "\copy ban_$1 from '$TEMPDIR/temp_$1' with (format csv, delimiter ';', header false);"
 # pas de libellé d'acheminement dans la version ODbL
@@ -36,10 +36,18 @@ rm $TEMPDIR/clean_$1.sql
 echo "`date +%H:%M:%S` Export JSON dept $1"
 # export postgres au format json pour addok
 psql --no-align --tuples-only -qc "
-select format('{\"id\":\"%s_%s\",\"type\":\"%s\",\"name\":\"%s\",\"postcode\":\"%s\",\"lon\":%s,\"lat\": %s,\"city\":\"%s\",\"departement\":\"%s\",\"region\":\"%s\",\"importance\":%s,\"housenumbers\":{%s}}',code_insee, id_fantoir, type, nom_voie, code_post, lat, lon, nom_commune, nom_dep, nom_reg, importance, housenumbers)
+select format('{\"id\":\"%s_%s\",\"type\":\"%s\",\"name\":\"%s\",\"postcode\":\"%s\",\"lon\":%s,\"lat\": %s,\"city\":\"%s\",\"departement\":\"%s\",\"region\":\"%s\",\"importance\":%s,\"housenumbers\":{%s}}',code_insee, fantoir, type, nom_voie, code_post, lat, lon, nom_commune, nom_dep, nom_reg, importance, housenumbers)
 from
-(select code_insee, (case when id_fantoir='' then 'XXXX' else id_fantoir end) || '_' ||
-left(md5(format('f=%s,n=%s,l=%s,a=%s,p=%s',id_fantoir,nom_voie,nom_ld,alias,code_post)),8) id_fantoir,
+(select code_insee,
+
+(case when id_ld is not null AND coalesce(id_voie,'')!=coalesce(id_ld,'') then coalesce(id_voie,'')||id_ld
+when coalesce(id_voie,'')!='' and nom_ld='' then coalesce(id_voie,'')
+when id_ld is not null then id_ld
+when coalesce(id_voie,'')!='' and nom_ld!='' then coalesce(id_voie,'')
+else
+'XXXX' end) || '_' || left(md5(format('n=%s,l=%s,a=%s,p=%s',nom_voie,nom_ld,alias,code_post)),6)
+ as fantoir,
+
 case when (coalesce(nom_voie,'') !='' and coalesce(nom_ld,'') !='' and replace(upper(unaccent(coalesce(nom_voie,''))),'-',' ')!=replace(upper(unaccent(coalesce(nom_ld,''))),'-',' ')) then (coalesce(nom_voie,'')||', '||coalesce(nom_ld,'')) when (coalesce(nom_voie,'')='') then nom_ld else nom_voie end as nom_voie,
 code_post,
 round(avg(lat::numeric),6) as lat,
@@ -58,3 +66,4 @@ group by 1,2,3,4,7,8,9,10,g.statut,g.population,nom_voie
 order by 1,2,3) as d;
 " > ../out/ban-odbl-$1.json
 echo "`date +%H:%M:%S` Terminé dept $1"
+
