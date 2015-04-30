@@ -15,6 +15,20 @@ with u as (select id as u_id,regexp_replace(nom_voie,'^(.*)/\1$','\1') as u_nom 
 -- nom_voie=nom1/nom2 + alias vide -> nom_voie=nom1 alias=nom2
 with u as (select id as u_id, left(nom_voie, position('/' in nom_voie)-1) as u_nom1, substring(nom_voie, position('/' in nom_voie)+1) as u_nom2 from ban_temp where nom_voie ~ '\/' and NOT nom_voie ~ '\/.*\/' and alias='') update ban_temp set nom_voie=u_nom1, alias=u_nom2 from u where id=u_id and alias='';
 
+-- suppression "lieu-dit xxx" -> "xxx"
+update ban_temp set nom_voie=replace(nom_voie,'lieu-dit ',' ') where nom_voie like 'lieu-dit %';
+
+-- abbréviations à conserver (mise en majuscule)
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(tgv|t g v)( |$)','\1TGV\2') where nom_voie like '%tgv%' or nom_voie like '%t g v%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(edf|e d f)( |$)','\1EDF\2') where nom_voie like '%e d f%' or nom_voie like '%edf%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(plm|p l m)( |$)','\1PLM\2') where nom_voie like '%p l m%' or nom_voie like '%plm%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(hlm|h l m)( |$)','\1HLM\2') where nom_voie like '%h l m%' or nom_voie like '%hlm%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(vvf|v v f)( |$)','\1VVF\2') where nom_voie like '%v v f%' or nom_voie like '%vvf%';
+
+-- désabréviation des initiales
+update ban_temp set nom_voie=replace(replace(replace(replace(nom_voie,'s c h david','sydney charles houghton davis'),'t p g','trésorier payeur général'),'c e c a',E'communauté européenne du charbon et de l\'acier'),'c g e p','CGEP') where nom_voie ~ ' . . . ';
+
+
 -- désabréviations...
 update ban_temp set nom_voie=regexp_replace(nom_voie,'^aer ','aérodrome ') where nom_voie like 'aer %';
 update ban_temp set nom_voie=regexp_replace(nom_voie,'^brtl ','bretelle ') where nom_voie like 'brtl %';
@@ -34,7 +48,7 @@ update ban_temp set nom_voie=regexp_replace(nom_voie,'^grand place gd pce ','gra
 update ban_temp set nom_voie=regexp_replace(nom_voie,'^rd pt ','rond-point ') where nom_voie like 'rd pt %';
 update ban_temp set nom_voie=regexp_replace(nom_voie,' all d',' allée d') where nom_voie like '% all d%';
 -- CAE => CARRER/CARRIERA ?
-update ban_temp set nom_voie=regexp_replace(nom_voie,' cht ',' château ') where nom_voie like '% cht %';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )cht ','\1château ') where nom_voie ~ '(^| )cht ';
 update ban_temp set nom_voie=regexp_replace(nom_voie,' crs ',' cours ') where nom_voie like '% crs %';
 update ban_temp set nom_voie=regexp_replace(nom_voie,' crx ',' croix ') where nom_voie like '% crx %';
 -- DOM => DOM/DOMAINE ?
@@ -51,6 +65,7 @@ update ban_temp set nom_voie=regexp_replace(nom_voie,' fbg ',' faubourg ') where
 update ban_temp set nom_voie=regexp_replace(nom_voie,' du foss ',' du fossé ') where nom_voie like '% du foss %';
 update ban_temp set nom_voie=regexp_replace(nom_voie,' gal (de |leclerc|daugan|chanzy|giraud|labat|paul|fauchon|le co|guillaumat|bruy|vuillemin|charles|delfino|duch|maurice|grazi|margue|soule|combelle|dubois|sir|duval)',' général \1') where nom_voie like '% gal %';
 update ban_temp set nom_voie=regexp_replace(nom_voie,' mal (de |leclerc|delat)',' maréchal \1') where nom_voie like '% mal %';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )mln ','\1moulin ') where nom_voie ~ '(^| )mln ';
 update ban_temp set nom_voie=regexp_replace(nom_voie,' reg ',' régiment ') where nom_voie like '% reg %';
 update ban_temp set nom_voie=regexp_replace(nom_voie,'^grp ','groupe ') where nom_voie like 'grp %';
 update ban_temp set nom_voie=regexp_replace(nom_voie,'^hab ','habitat ') where nom_voie like 'hab %';
@@ -81,17 +96,22 @@ update ban_temp set nom_voie=regexp_replace(nom_voie,' qua ',' quartier ') where
 -- RES
 update ban_temp set nom_voie=regexp_replace(nom_voie,' rtd ',' rotonde ') where nom_voie like '% rtd %';
 update ban_temp set nom_voie=regexp_replace(nom_voie,' rte ',' route ') where nom_voie like '% rte %';
-update ban_temp set nom_voie=regexp_replace(nom_voie,' anc (combat d|combattants|combat$)',' anciens \1') where nom_voie like '%anc comb%';
+update ban_temp set nom_voie=regexp_replace(replace(nom_voie,'anc combattant alg',E'des anciens combattants d\'algérie'),' anc (combat d|combattants|combat$)',' anciens \1') where nom_voie like '%anc comb%';
 update ban_temp set nom_voie=regexp_replace(nom_voie,'chemin anc ','chemin ancien ') where nom_voie like '% anc %';
 update ban_temp set nom_voie=regexp_replace(nom_voie,'route anc ','route ancienne ') where nom_voie like '% anc %';
-update ban_temp set nom_voie=regexp_replace(nom_voie,' anc (voie|porte|tannerie|tanneries)( |$)',' ancienne \1\2') where nom_voie like '% anc %';
+update ban_temp set nom_voie=regexp_replace(nom_voie,' anc (voie|porte|tannerie|tanneries|route)( |$)',' ancienne \1\2') where nom_voie like '% anc %';
+update ban_temp set nom_voie=regexp_replace(nom_voie,' anc (collège|couvent|chem|chemin)( |$)',' ancien \1\2') where nom_voie like '% anc %';
 update ban_temp set nom_voie=regexp_replace(nom_voie,' rle ',' ruelle ') where nom_voie like '% rle %';
 update ban_temp set nom_voie=regexp_replace(nom_voie,' sq ',' square ') where nom_voie like '% sq %';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )st ','\1saint-') where nom_voie ~ '(^| )st ';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )ste ','\1sainte-') where nom_voie ~ '(^| )ste ';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )stes ','\1saintes-') where nom_voie ~ '(^| )stes ';
+
 -- TRA
 update ban_temp set nom_voie=regexp_replace(nom_voie,' gde rue ',' grande-rue ') where nom_voie like '% gde %';
 
 -- dédoublonage des désabréviations
-update ban_temp set nom_voie=regexp_replace(nom_voie,'(avenue|place|boulevard|placette|ancien|ancienne|petit|petite|voie|voie communale|route|chemin vicinal|lotissement|résidence|ancienne route|chemin|vieux chemin|vieille route|grande.rue|grand.rue) \1','\1') where nom_voie ~ '(avenue|place|boulevard|placette|ancien|ancienne|petit|petite|voie|voie communale|route|chemin vicinal|lotissement|résidence|ancienne route|chemin|vieux chemin|vieille route|grande.rue|grand.rue) \1';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'^(.*) \1 ','\1 ') where nom_voie ~ '^(.*) \1 ';
 update ban_temp set nom_voie=regexp_replace(nom_voie,'grand.rue (grande.rue)','\1') where nom_voie like '%grande_rue%';
 
 -- nom_voie + nom_ld + alias est vide > reprise du nom d'après noms issus des plans cadastraux (algo BANO)
@@ -136,6 +156,17 @@ update ban_temp set nom_voie=replace(replace(replace(replace(replace(replace(rep
 
 -- chiffres romains en majuscule... II III IV VI VII VIII XII XV XIV XXIII
 update ban_temp set nom_voie=regexp_replace(regexp_replace(regexp_replace(regexp_replace(regexp_replace(regexp_replace( regexp_replace(regexp_replace(regexp_replace(regexp_replace(nom_voie,' Ii( |$)',' II\1'), ' Iii( |$)',' III\1'),' Iv( |$)',' IV\1'),' Vi( |$)',' VI\1'),' Vii( |$)',' VII\1'),' Viii( |$)',' VIII\1'),' Xii( |$)',' XII\1'),' Xv( |$)',' XV\1'),' Xiv( |$)',' XIV\1'),' Xxiii( |$)',' XXIII\1') where nom_voie != '' and nom_voie ~ '(^| )[IXV][ixv]*( |$)';
+
+-- erreurs d'accentuation
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(du Fosse)( |$)','\1du Fossé\2') where nom_voie like '%du Fosse%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Eglise)( |$)','\1Église\2') where nom_voie like '%Eglise%';
+-- update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Abbe)( |$)','\1Abbé\2') where nom_voie like '%Abbe%';
+-- update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Ampere)( |$)','\1Ampère\2') where nom_voie like '%Ampere%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Benoit)( |$)','\1Benoît\2') where nom_voie like '%Benoit%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Chenes)( |$)','\1Chênes\2') where nom_voie like '%Chenes%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Chene)( |$)','\1Chêne\2') where nom_voie like '%Chene%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Franche.Comte)( |$)','\1Franche-Comté\2') where nom_voie like '%Franche_Comte%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Francois)( |$)','\1François\2') where nom_voie like '%Francois%';
 
 -- Saint et Sainte avec tiret
 update ban_temp set nom_voie=replace(nom_voie,'Saint ','Saint-') where nom_voie ~ 'Saint ';
@@ -202,8 +233,10 @@ update ban_temp set nom_ld=regexp_replace(nom_ld,'^TRN( |$)','TERRAIN\1') where 
 update ban_temp set nom_ld=regexp_replace(nom_ld,'DSU ','DESSUS ') where nom_ld ~ 'DSU ';
 update ban_temp set nom_ld=regexp_replace(nom_ld,'DSO ','DESSOUS ') where nom_ld ~ 'DSO ';
 update ban_temp set nom_ld=regexp_replace(nom_ld,'^ABE  ','ABBAYE ') where nom_ld ~ '^ABE ';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'(^| )HLG( |$)','\1HALAGE\2') where nom_ld ~ '(^| )HLG( |$)';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'(^| )JCT( |$)','\1JONCTION\2') where nom_ld ~ '(^| )JCT( |$)';
 
--- non traités: BSN CLOI PN PLN AMI CGNE COLI PLT FON MAN ZAV ENC PNT MLN GARN MF HIP CHL GRI PAL BRE BRD PCE
+-- non traités: BSN CLOI PN PLN AMI CGNE COLI PLT FON MAN ZAV ENC PNT GARN MF HIP CHL GRI PAL BRE BRD PCE GCH (grand chemin) DFL LCF DCR DIM RTM PRL PRQ BCP (bataillon chasseurs alpins) BTN (bataillon) RTF CHS FTP (francs-tireurs partisans) CBR STR MQS (marquis) PPF
 
 -- apostrophes manquantes
 update ban_temp set nom_ld=regexp_replace(nom_ld,'(^| )(D|L|QU|PRESQU) ([AEIOUYH])','\1\2'||chr(39)||'\3','g') where nom_ld ~ '(^| )(D|L|QU|PRESQU) [AEIOUYH]';
