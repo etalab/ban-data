@@ -1,5 +1,5 @@
 # export postgres au format json pour addok
-psql --no-align --tuples-only -qc "
+psql --no-align --tuples-only -P pager -qc "
 select format('{\"id\":\"%s_%s\",\"type\":\"%s\",\"name\":\"%s\",\"postcode\":\"%s\",\"lon\":%s,\"lat\": %s,\"city\":\"%s\",\"context\":\"%s\",\"importance\":%s,\"housenumbers\":{%s}}',code_insee, fantoir, type, case when nom_voie='' then nom_commune else nom_voie end, code_post, lat, lon, nom_commune, case when code_insee LIKE '97%' then left(code_insee,3) else left(code_insee,2) end || ', ' || case when nom_dep=nom_commune then nom_reg else nom_dep || ', ' || nom_reg end , importance, housenumbers)
 from
 (select code_insee,
@@ -29,4 +29,13 @@ join cog_reg r on (r.reg=d.reg)
 group by 1,2,3,4,7,8,9,10,g.statut,g.population,nom_voie
 order by 1,2,3) as d;
 "
+
+psql -t -P pager -A -c "
+SELECT '{\"id\": \"' || g.insee || '\",\"type\": \"' || CASE WHEN population<1 THEN 'village' WHEN population<'10' THEN 'town' ELSE 'city' END  || '\",\"name\": \"' || g.nom || '\",\"postcode\": \"' || cp.cp || '\",\"lat\": \"' || round(st_y(st_transform(st_setsrid(ST_Point(x_chf_lieu*100,y_chf_lieu*100),2154),4326))::numeric,6) || '\",\"lon\": \"' || round(st_x(st_transform(st_setsrid(ST_Point(x_chf_lieu*100,y_chf_lieu*100),2154),4326))::numeric,6) || '\",\"city\": \"' || g.nom|| '\",\"context\": \"' || case when g.insee LIKE '97%' then left(g.insee,3) else left(g.insee,2) end || ', ' || case when nom_dep=g.nom then nom_reg else nom_dep || ', ' || nom_reg end || '\", \"population\": ' || population || ', \"adm_weight\": ' || CASE WHEN statut LIKE 'Capital%' THEN 6 WHEN statut = 'Préfecture de régi' THEN 5 WHEN statut='Préfecture' THEN 4 WHEN statut LIKE 'Sous-pr%' THEN 3 WHEN statut='Chef-lieu canton' THEN 2 ELSE 1 END || ', \"importance\": ' || greatest(0.075,round(log((CASE WHEN statut LIKE 'Capital%' THEN 6 WHEN statut = 'Préfecture de régi' THEN 5 WHEN statut='Préfecture' THEN 4 WHEN statut LIKE 'Sous-pr%' THEN 3 WHEN statut='Chef-lieu canton' THEN 2 ELSE 1 END)+log(population+1)/3),4)) || '}'
+FROM osm_communes g
+join poste_cp cp on (cp.insee=g.insee)
+join cog_dep d on (d.dep=left(g.insee,2) or d.dep=left(g.insee,3))
+join cog_reg r on (r.reg=d.reg)
+WHERE g.insee like '$1%' order by g.insee;
+" | grep id
 
