@@ -160,6 +160,7 @@ update ban_temp set nom_voie=regexp_replace(regexp_replace(regexp_replace(regexp
 -- erreurs d'accentuation
 update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(du Fosse)( |$)','\1du Fossé\2') where nom_voie like '%du Fosse%';
 update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Eglise)( |$)','\1Église\2') where nom_voie like '%Eglise%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Gabriel Peri)( |$)','\1Gabriel Péri\2') where nom_voie like '%Gabriel Peri%';
 -- update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Abbe)( |$)','\1Abbé\2') where nom_voie like '%Abbe%';
 -- update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Ampere)( |$)','\1Ampère\2') where nom_voie like '%Ampere%';
 update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Benoit)( |$)','\1Benoît\2') where nom_voie like '%Benoit%';
