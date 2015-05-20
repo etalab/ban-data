@@ -1,6 +1,7 @@
 # import de la liste des codes postaux
 # c'est une version corrigée qui est utilisée, le fichier officiel sur data.gouv.fr comportant des erreurs
 
+mkdir ../data/poste/
 cd ../data/poste/
 wget -nc https://www.data.gouv.fr/s/resources/base-officielle-des-codes-postaux/community/20150308-152148/code_postaux_v201410_corr.csv
 
