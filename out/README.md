@@ -11,3 +11,9 @@ Pour chaque voie est indiqué:
 * le nombre d'adresses dans BAN
 * le nombre d'adresses dans BANO
 * la différence (BAN-BANO)
+
+
+*anomalies-aaaa-mm-jj.csv.gz*
+
+Liste des anomalies détectées par les scripts check_xxxx.
+
