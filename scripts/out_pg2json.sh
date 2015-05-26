@@ -21,7 +21,7 @@ nom_dep,
 nom_reg,
 case when coalesce(id_voie,id_ld,id_fantoir) > '9999' then 'locality' else 'street' end as type,
 round(log((CASE WHEN (code_post LIKE '75%' OR g.statut LIKE 'Capital%') THEN 6 WHEN (code_post LIKE '690%' OR code_post LIKE '130%' OR g.statut = 'Préfecture de régi') THEN 5 WHEN g.statut='Préfecture' THEN 4 WHEN g.statut LIKE 'Sous-pr%' THEN 3 WHEN g.statut='Chef-lieu canton' THEN 2 ELSE 1 END)+log(g.population+1)/3)::numeric*log(1+log(count(b.*)+1)+log(CASE WHEN nom_voie like 'Boulevard%' THEN 4 WHEN nom_voie LIKE 'Place%' THEN 4 WHEN nom_voie LIKE 'Espl%' THEN 4 WHEN nom_voie LIKE 'Av%' THEN 3 WHEN nom_voie LIKE 'Rue %' THEN 2 ELSE 1 END))::numeric,4)::text as importance,
-string_agg(format('\"%s\":{\"lat\":%s,\"lon\":%s,\"id\":\"%s\"}',trim(numero||rep),round(lon::numeric,6)::text,round(lat::numeric,6)::text,id),',' order by numero||rep,id) as housenumbers
+string_agg(format('\"%s\":{\"lat\":%s,\"lon\":%s,\"id\":\"%s\"}',trim(numero||' '||rep),round(lon::numeric,6)::text,round(lat::numeric,6)::text,id),',' order by numero||rep,id) as housenumbers
 from ban_$1 b
 join osm_communes g on (g.insee=code_insee)
 join cog_dep d on (d.dep=left(code_insee,2) or d.dep=left(code_insee,3))
