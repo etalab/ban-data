@@ -1,0 +1,2 @@
+psql -qc "\copy (select v.insee, '' as id, 'id', '',format('adresse RAN manquante: %s %s (%s)',trim(c.numero||' '||c.extension), v.lib_voie, v.dernier_mot) as nb from poste_hexacle c join (select v.* from poste_hexavia v left join ban_$1 b on (b.code_insee=v.insee and upper(unaccent(b.nom_voie))~v.dernier_mot) where b.id is null) as v on (v.matricule_voie=c.matricule and c.numero !='') where v.insee like '$1%' group by c.cea, v.insee, c.numero, c.extension, v.lib_voie, v.dernier_mot order by v.insee, v.lib_voie, c.numero, c.extension) to check_ran_$1 with (format csv);"
+
