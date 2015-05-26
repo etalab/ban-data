@@ -1,29 +1,34 @@
 type,nb_err
-numero en 5xxx,3310288
-nom_voie contient nom_ld,2625207
-nom_voie et nom_ld identiques ,2531771
-id_fantoir est vide,1510573
-numero+rep en doublons,1463406
-nom_voie vide + nom_ld present + FANTOIR indique LD,1039358
-numero en 9xxx,796103
-nom ne contient pas dernier mot fantoir,601884
-nom_commune et nom_ld identiques,141642
-numero commence par ,104465
-nom_voie et nom_ld vide,66395
-absence apostrophe probable,40032
-nom_voie contient /,33652
-abbreviation residuelle,22730
-id_fantoir annule/obsolete depuis ,20555
-nom_ld avec premier mot double,16346
-aucun nom ni code fantoir,12232
-nom comportant des parentheses,11262
-code_post est vide,10888
-abbreviation residuelle doublee,5631
-nom_voie et alias identiques ,5545
-nom_voie contient / avec valeurs repetees,4985
-id_fantoir inconnu,1203
+numero en 5xxx,3408703
+nom_voie contient nom_ld,2681808
+nom_voie et nom_ld identiques ,2580116
+id_fantoir est vide,1655337
+numero+rep en doublons,1550681
+nom_voie vide + nom_ld present + FANTOIR indique LD,1065467
+numero en 9xxx,829911
+nom ne contient pas dernier mot fantoir,651560
+numero commence par ,168087
+nom_commune et nom_ld identiques,143376
+nom_voie et nom_ld vide,75237
+code_post est vide,45762
+absence apostrophe probable,44892
+nom_voie contient /,37522
+erreur accentuation,30006
+abbreviation residuelle,23316
+id_fantoir annule/obsolete depuis ,21515
+aucun nom ni code fantoir,19707
+nom_ld avec premier mot double,16633
+nom comportant des parentheses,15626
+code_insee inconnu,9110
+id_fantoir inconnu,7960
+nom_voie contient / avec valeurs repetees,5911
+nom_voie et alias identiques ,5770
+erreur probable de desabreviation ,5599
+abbreviation residuelle doublee,5517
+code_post absent de la base officielle,2890
 nom comportant des tirets,195
-nom comportant des caracteres non alpha-num,158
-code_post inconnu,18
-nom_ld et alias identiques ,7
-rep en minuscule,4
+nom comportant des caracteres non alpha-num,190
+code_post inconnu,20
+aucune adresse sur la commune,10
+nom_ld et alias identiques ,8
+rep en minuscule,8
