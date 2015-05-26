@@ -22,6 +22,13 @@ create table poste_hexacle (matricule text, numero text, ext_abrege text, extens
 \copy poste_temp from '../data/poste/hsw4aaaa.ai' with (format csv, header true, encoding 'iso8859-1');
 insert into poste_hexacle (select trim(substr(ligne,1,8)), trim(substr(ligne,9,4)), substr(ligne,13,1), trim(substr(ligne,14,10)), trim(substr(ligne,24,10)), substr(ligne,25,1) from poste_temp);
 
+drop table poste_temp;
+
 -- création des index
 create index hexavia_matricule on poste_hexavia using spgist (matricule_voie) with (fillfactor=100);
+create index hexavia_insee on poste_hexavia using spgist (insee);
+create index hexaposte_cp on poste_hexaposte using spgist(cp);
+create index hexaposte_insee on poste_hexaposte using spgist(insee);
+create index hexacle_voie on poste_hexacle using spgist(matricule);
+
 
