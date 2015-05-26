@@ -3,7 +3,7 @@
 FANTOIR=FANTOIR0415
 
 cd ../data/dgfip
-wget https://www.data.gouv.fr/s/resources/fichier-fantoir-des-voies-et-lieux-dits/20150512-104128/FANTOIR0415.zip
+wget -nc https://www.data.gouv.fr/s/resources/fichier-fantoir-des-voies-et-lieux-dits/20150512-104128/FANTOIR0415.zip
 unzip $FANTOIR.zip
 
 # import dans SQL en format fixe (delimiter et quote spéciaux pour ignorer)
