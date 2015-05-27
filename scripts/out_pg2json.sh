@@ -1,6 +1,6 @@
 # export postgres au format json pour addok
 psql --no-align --tuples-only -P pager -qc "
-select format('{\"id\":\"%s_%s\",\"type\":\"%s\",\"name\":\"%s\",\"postcode\":\"%s\",\"lon\":%s,\"lat\": %s,\"city\":\"%s\",\"context\":\"%s\",\"importance\":%s,\"housenumbers\":{%s}}',code_insee, fantoir, type, case when nom_voie='' then nom_commune else nom_voie end, code_post, lat, lon, nom_commune, case when code_insee LIKE '97%' then left(code_insee,3) else left(code_insee,2) end || ', ' || case when nom_dep=nom_commune then nom_reg else nom_dep || ', ' || nom_reg end , importance, housenumbers)
+select format('{\"id\":\"%s_%s\",\"type\":\"%s\",\"name\":\"%s\",\"postcode\":\"%s\",\"citycode\":\"%s\",\"lon\":%s,\"lat\": %s,\"city\":\"%s\",\"context\":\"%s\",\"importance\":%s,\"housenumbers\":{%s}}',code_insee, fantoir, type, case when nom_voie='' then nom_commune else nom_voie end, code_post, code_insee, lat, lon, nom_commune, case when code_insee LIKE '97%' then left(code_insee,3) else left(code_insee,2) end || ', ' || case when nom_dep=nom_commune then nom_reg else nom_dep || ', ' || nom_reg end , importance, housenumbers)
 from
 (select code_insee,
 
