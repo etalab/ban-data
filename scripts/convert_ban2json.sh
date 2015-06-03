@@ -8,7 +8,15 @@ DROP TABLE IF EXISTS BAN_$1;
 CREATE TABLE ban_$1 () INHERITS (ban_full);
 "
 
-unzip -qjn ../data/ign/*odbl*_$1.zip -d ../data/ign/
+unzip -qjn ../data/ign/livraison/$1/*odbl*_$1.zip -d ../data/ign/
+if grep -q ISO ../data/ign/*odbl*_"$1".csv
+then
+	# conversion UTF8 si ISO en entrée
+	iconv -f ISO8859-1 -t UTF8 ../data/ign/*odbl*_$1.csv > temp_$1
+	rm -f ../data/ign/*odbl*_$1.csv
+	mv temp_$1 ../data/ign/*odbl*_$1.csv
+fi
+
 tail -n +2 ../data/ign/*odbl*_$1.csv | sort -u > $TEMPDIR/temp_$1
 psql -c "\copy ban_$1 from '$TEMPDIR/temp_$1' with (format csv, delimiter ';', header false);"
 # pas de libellé d'acheminement dans la version ODbL
