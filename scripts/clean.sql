@@ -115,7 +115,7 @@ update ban_temp set nom_voie=regexp_replace(nom_voie,'^(.*) \1 ','\1 ') where no
 update ban_temp set nom_voie=regexp_replace(nom_voie,'grand.rue (grande.rue)','\1') where nom_voie like '%grande_rue%';
 
 -- nom_voie + nom_ld + alias est vide > reprise du nom d'après noms issus des plans cadastraux (algo BANO)
-with u as (select b.id as u_id, f.nom_cadastre from ban_temp b join dgfip_noms_cadastre f on (f.fantoir like b.code_insee||b.id_fantoir||'%') where id_fantoir !='' and nom_voie||nom_ld||alias='') update ban_temp set nom_voie=nom_cadastre from u where id=u_id;
+with u as (select b.id as u_id, f.nom_cadastre from ban_temp b join dgfip_noms_cadastre f on (f.fantoir like '!dep!%' AND f.fantoir like b.code_insee||b.id_fantoir||'%') where id_fantoir !='' and nom_voie||nom_ld||alias='') update ban_temp set nom_voie=nom_cadastre from u where id=u_id;
 
 -- nom_voie vide + nom_ld present + FANTOIR indique LD
 update ban_temp set nom_voie=nom_ld, nom_ld='' where nom_voie='' and nom_ld !='' and id_fantoir LIKE 'B%';
