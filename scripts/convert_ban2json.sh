@@ -25,7 +25,7 @@ psql -c "UPDATE ban_$DEP SET libelle_acheminement='';"
 rm $TEMPDIR/temp_$DEP
 
 echo "`date +%H:%M:%S` Conformation et indexation dept $DEP"
-psql -c "
+psql -qc "
 -- mise à jour des noms de voie, lieu-dit ou alias nuls
 update ban_$DEP set nom_voie='' where nom_voie is null;
 update ban_$DEP set nom_ld='' where nom_ld is null;
