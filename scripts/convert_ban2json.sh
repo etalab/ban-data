@@ -33,8 +33,8 @@ update ban_$DEP set alias='' where alias is null;
 update ban_$DEP set id_fantoir='' where id_fantoir is null;
 
 -- création des index
-create index ban_$DEP_id on ban_$DEP using spgist(id);
-create index ban_$DEP_insee on ban_$DEP using spgist(code_insee);
+create index ban_id_$DEP on ban_$DEP using spgist(id);
+create index ban_insee_$DEP on ban_$DEP using spgist(code_insee);
 "
 
 echo "`date +%H:%M:%S` Harmonisation dept $DEP"
