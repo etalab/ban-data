@@ -7,12 +7,7 @@ parallel -j 8 sh convert_ban2json.sh {} ::: 01 02 03 04 05 06 07 08 09 `seq 10 1
 
 echo "`date +%H:%M:%S` Fusion et compression des fichiers"
 # fusion en un fichier unique
-rm -f ../out/ban-odbl.json
-for dep in {01..19} 2A 2B {21..95} {971..974} ; do grep -v ^$ ../out/ban-odbl-$dep.json >>  ../out/ban-odbl.json ; gzip -9 ban-odbl-$dep.json ; done
-
-echo "`date +%H:%M:%S` Compression fichier global"
-# compression et copie sur le site web
-gzip -9 ban-odbl.json
+: > ../out/ban-odbl.json
+for dep in {01..19} 2A 2B {21..95} {971..974} ; do echo $dep; grep -v ^$ ../out/ban-odbl-$dep.json >>  ../out/ban-odbl.json ; gzip -9 ban-odbl-$dep.json ; done
 
 echo "`date +%H:%M:%S` fin de traitement"
-
