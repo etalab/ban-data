@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS BAN_$DEP;
 CREATE TABLE ban_$DEP () INHERITS (ban_full);
 "
 
-unzip -qjn ../data/ign/livraison/$DEP/*odbl*_$DEP.zip -d ../data/ign/
+# unzip -qjn ../data/ign/livraison/$DEP/*odbl*_$DEP.zip -d ../data/ign/
 if grep -q ISO ../data/ign/*odbl*_"$DEP".csv
 then
 	# conversion UTF8 si ISO en entrée
