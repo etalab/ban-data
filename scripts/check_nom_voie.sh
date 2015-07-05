@@ -104,6 +104,16 @@ psql -c "\copy (select code_insee,id,'nom_ld',nom_ld,'absence apostrophe probabl
 echo "\n-- nom_voie commence par 'Enceinte' et nom_ld par 'EN '"
 psql -c "\copy (select code_insee,id,'nom_voie',nom_voie,'erreur probable de desabreviation : '||nom_ld from ban_temp where nom_voie ilike 'ENCEINTE %' and nom_ld LIKE 'EN %') to temp with (format csv, header false);"; cat temp >> erreurs.csv
 
+echo "\n-- nom_voie commence par 'sentier' et nom_afnor par 'SENTE '"
+psql -c "\copy (select code_insee,id,'nom_voie',nom_voie,'erreur probable de desabreviation : '||nom_afnor from ban_temp where nom_afnor ILIKE 'SENTE %' and nom_voie ilike 'SENTIER %') to temp with (format csv, header false);"; cat temp >> erreurs.csv
+
+echo "\n-- test cohérence type voie entre nom_voie et nom_afnor"
+psql -c "\copy (select code_insee,id,'nom_voie',nom_voie,'incohérence de type de voie nom_voie/nom_afnor : '||nom_afnor from ban_temp where nom_afnor !='' and nom_afnor not like 'LIEU DIT%' and nom_afnor not like 'HAMEAU %' and split_part(upper(unaccent(replace(nom_voie,chr(39),' '))),' ',1) != split_part(regexp_replace(regexp_replace(regexp_replace(regexp_replace(regexp_replace(regexp_replace(regexp_replace(regexp_replace(regexp_replace(regexp_replace(regexp_replace(regexp_replace(regexp_replace(regexp_replace(regexp_replace(nom_afnor,'^ALL ','ALLEE '),'^AV ','AVENUE '),'^BD ','BOULEVARD '),'^CTRE ','CENTRE '),'^IMM ','IMMEUBLE '),'^IMP ','IMPASSE '),'^LOT ','LOTISSEMENT '),'^PAS ','PASSAGE '),'^PL ','PLACE '),'^RES ','RESIDENCE '),'^RPT ','ROND-POINT '),'^ROND POINT ','ROND-POINT '),'^RTE ','ROUTE '),'^SQ ','SQUARE '),'^VLGE ','VILLAGE '),' ',1)) to temp with (format csv, header false);"; cat temp >> erreurs.csv
+
+echo "-- nom_afnor introuvable dans hexavia"
+psql -c "\copy (select b.code_insee, b.id, 'nom_afnor', b.nom_afnor, 'nom_afnor introuvable dans hexavia' from (select n.* from (select code_insee, nom_afnor from ban_temp where nom_afnor!='' group by 1,2) as n left join poste_hexavia v on (v.insee=n.code_insee and v.lib_voie=n.nom_afnor) where v.insee is null) as m join ban_temp b on (b.code_insee=m.code_insee and b.nom_afnor=m.nom_afnor)) to temp with (format csv, header false);"; cat temp >> erreurs.csv
+
+
 # nom_ld à 26 caractères...
-# absence probable d'apostrophe
+
 
