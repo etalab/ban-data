@@ -10,7 +10,7 @@ CREATE TABLE ban_$DEP () INHERITS (ban_full);
 "
 
 # unzip -qjn ../data/ign/livraison/$DEP/*odbl*_$DEP.zip -d ../data/ign/
-if grep -q ISO ../data/ign/*odbl*_"$DEP".csv
+if file ../data/ign/*odbl*_"$DEP".csv | grep -q ISO
 then
 	# conversion UTF8 si ISO en entrée
 	iconv -f ISO8859-1 -t UTF8 ../data/ign/*odbl*_$DEP.csv > temp_$DEP
