@@ -1,7 +1,6 @@
 # contrôle de cohérence et détection d'erreurs et anomalies sur la colonne code_insee
 
-# chaine de connexion à la base postgres locale
-DB=postgresql:///cquest
+source config.sh
 
 echo "\n-- code_insee est vide (groupé par département)\n"
 # psql -P pager -c "select left(code_insee,2) as dept, count(*) as nb from ban_temp where code_insee='' or code_insee is null group by 1 order by 1;"

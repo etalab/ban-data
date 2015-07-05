@@ -1,7 +1,6 @@
 # contrôle de cohérence et détection d'erreurs et anomalies sur la colonne nom_commune
 
-# chaine de connexion à la base postgres locale
-DB=postgresql:///cquest
+source config.sh
 
 echo "\n-- nom_commune est vide (groupé par département)\n"
 psql -P pager -c "select left(code_insee,2) as dept, count(*) as nb from ban_temp where nom_commune='' group by 1 order by 1;"

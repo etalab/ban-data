@@ -1,5 +1,4 @@
-# chaine de connexion à la base postgres locale
-DB=postgresql:///cquest
+source config.sh
 
 echo "\n-- nombre d'ID vides, nuls ou ne commençant pas par ADR\n"
 psql -c "select left(code_insee,2) as dept, count(*) as nb from ban_temp where id is null or id='' or id not like 'ADR%' group by 1;" -P pager

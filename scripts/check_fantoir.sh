@@ -1,7 +1,6 @@
 # contrôle de cohérence et détection d'erreurs et anomalies sur la colonne id_fantoir
 
-# chaine de connexion à la base postgres locale
-DB=postgresql:///cquest
+source config.sh
 
 echo "\n-- id_fantoir est vide (groupé par département)\n"
 psql -P pager -c "select left(code_insee,2) as dept, count(*) as nb, sum(case when nom_voie||nom_ld||alias='' then 1 else 0 end) as nb_sans_nom from ban_temp where id_fantoir='' group by 1 order by 1;"

@@ -1,5 +1,4 @@
-# chaine de connexion à la base postgres locale
-DB=postgresql:///cquest
+source config.sh
 
 echo "\n-- numéros non numériques\n"
 sql2csv --db "$DB" -H --query "select code_insee,id,'numero',numero,'numero non numerique' from ban_temp where NOT numero ~ '[0-9]*'" >> erreurs.csv
