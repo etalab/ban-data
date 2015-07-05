@@ -6,8 +6,7 @@
 # erreur: descriptif textuel de l'erreur
 # echo 'code_insee,id,champs,contenu,erreur' > erreurs.csv
 
-# chaine de connexion à la base postgres locale
-DB=postgresql:///cquest
+source config.sh
 
 echo "\n-- nombre de nom_voie vides ou nuls sans nom_ld (regroupés par département)\n"
 psql -P pager -c "select left(code_insee,2) as dept, count(*) as nb_nom_vide, sum(case when id_fantoir!='' then 1 else 0 end) as avec_fantoir from ban_temp where nom_voie='' and nom_ld='' group by 1 order by 1;"
@@ -97,9 +96,12 @@ psql -c "\copy (select code_insee,id,'nom_ld',nom_ld,'nom_ld avec premier mot do
 echo "\n-- nom_voie vide, nom_ld present et FANTOIR indique LD"
 psql -c "\copy (select code_insee,id,'nom_ld',nom_ld,'nom_voie vide + nom_ld present + FANTOIR indique LD' from ban_temp where nom_voie='' and nom_ld !='' and id_fantoir LIKE 'B%') to temp with (format csv, header false);"; cat temp >> erreurs.csv
 
-echo "\n-- nom_ld absence probable d'apostrophe apres L"
+echo "\n-- nom_ld absence probable d'apostrophe apres D,L,QU,PRESQU"
 psql -c "\copy (select code_insee,id,'nom_ld',nom_ld,'absence apostrophe probable' from ban_temp where nom_ld !='' and nom_ld ~ '(^| )(D|L|QU|PRESQU) [AEIOUYH]') to temp with (format csv, header false);"; cat temp >> erreurs.csv
 psql -c "\copy (select code_insee,id,'nom_ld',nom_ld,'absence apostrophe probable' from ban_temp where nom_ld !='' and nom_ld ~ ' S IL ') to temp with (format csv, header false);"; cat temp >> erreurs.csv
+
+echo "-- nom_ld semble tronqué à 26 caractères"
+psql -c "\copy (select code_insee, id, 'nom_ld',nom_ld,'nom_ld semble tronqué à 26 caractères' from ban_temp where length(nom_ld)=26 and nom_ld ~ ' ([A-Z]|[BCDFGHJKLMNPQRSTVWXZ][BCDFGHJKLMNPQRSTVWXZ])$' order by 1,4) to temp with (format csv, header false);"; cat temp >> erreurs.csv
 
 echo "\n-- nom_voie commence par 'Enceinte' et nom_ld par 'EN '"
 psql -c "\copy (select code_insee,id,'nom_voie',nom_voie,'erreur probable de desabreviation : '||nom_ld from ban_temp where nom_voie ilike 'ENCEINTE %' and nom_ld LIKE 'EN %') to temp with (format csv, header false);"; cat temp >> erreurs.csv
@@ -112,8 +114,4 @@ psql -c "\copy (select code_insee,id,'nom_voie',nom_voie,'incohérence de type d
 
 echo "-- nom_afnor introuvable dans hexavia"
 psql -c "\copy (select b.code_insee, b.id, 'nom_afnor', b.nom_afnor, 'nom_afnor introuvable dans hexavia' from (select n.* from (select code_insee, nom_afnor from ban_temp where nom_afnor!='' group by 1,2) as n left join poste_hexavia v on (v.insee=n.code_insee and v.lib_voie=n.nom_afnor) where v.insee is null) as m join ban_temp b on (b.code_insee=m.code_insee and b.nom_afnor=m.nom_afnor)) to temp with (format csv, header false);"; cat temp >> erreurs.csv
-
-
-# nom_ld à 26 caractères...
-
 
