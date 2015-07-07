@@ -1,2 +1,2 @@
-DB=postgresql:///cquest
+export DB="postgresql:///cquest"
 
