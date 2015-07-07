@@ -158,16 +158,16 @@ update ban_temp set nom_voie=replace(replace(replace(replace(replace(replace(rep
 update ban_temp set nom_voie=regexp_replace(regexp_replace(regexp_replace(regexp_replace(regexp_replace(regexp_replace( regexp_replace(regexp_replace(regexp_replace(regexp_replace(nom_voie,' Ii( |$)',' II\1'), ' Iii( |$)',' III\1'),' Iv( |$)',' IV\1'),' Vi( |$)',' VI\1'),' Vii( |$)',' VII\1'),' Viii( |$)',' VIII\1'),' Xii( |$)',' XII\1'),' Xv( |$)',' XV\1'),' Xiv( |$)',' XIV\1'),' Xxiii( |$)',' XXIII\1') where nom_voie != '' and nom_voie ~ '(^| )[IXV][ixv]*( |$)';
 
 -- erreurs d'accentuation
-update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(du Fosse)( |$)','\1du Fossé\2') where nom_voie like '%du Fosse%';
-update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Eglise)( |$)','\1Église\2') where nom_voie like '%Eglise%';
-update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Gabriel Peri)( |$)','\1Gabriel Péri\2') where nom_voie like '%Gabriel Peri%';
--- update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Abbe)( |$)','\1Abbé\2') where nom_voie like '%Abbe%';
--- update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Ampere)( |$)','\1Ampère\2') where nom_voie like '%Ampere%';
-update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Benoit)( |$)','\1Benoît\2') where nom_voie like '%Benoit%';
-update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Chenes)( |$)','\1Chênes\2') where nom_voie like '%Chenes%';
-update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Chene)( |$)','\1Chêne\2') where nom_voie like '%Chene%';
-update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Franche.Comte)( |$)','\1Franche-Comté\2') where nom_voie like '%Franche_Comte%';
-update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Francois)( |$)','\1François\2') where nom_voie like '%Francois%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(du Fosse)( |$)','\1du Fossé\3') where nom_voie like '%du Fosse%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Eglise)( |$)','\1Église\3') where nom_voie like '%Eglise%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Gabriel Peri)( |$)','\1Gabriel Péri\3') where nom_voie like '%Gabriel Peri%';
+-- update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Abbe)( |$)','\1Abbé\3') where nom_voie like '%Abbe%';
+-- update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Ampere)( |$)','\1Ampère\3') where nom_voie like '%Ampere%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Benoit)( |$)','\1Benoît\3') where nom_voie like '%Benoit%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Chenes)( |$)','\1Chênes\3') where nom_voie like '%Chenes%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Chene)( |$)','\1Chêne\3') where nom_voie like '%Chene%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Franche.Comte)( |$)','\1Franche-Comté\3') where nom_voie like '%Franche_Comte%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Francois)( |$)','\1François\3') where nom_voie like '%Francois%';
 
 -- Saint et Sainte avec tiret
 update ban_temp set nom_voie=replace(nom_voie,'Saint ','Saint-') where nom_voie ~ 'Saint ';
