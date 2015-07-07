@@ -17,6 +17,7 @@ psql -qc "drop table if exists ban_temp; CREATE TABLE ban_temp (
 	lat FLOAT NOT NULL, 
 	nom_commune TEXT
 );"
+
 for f in *.csv; do
 	echo $f
 	if file $f | grep -q ISO
@@ -28,6 +29,7 @@ for f in *.csv; do
 		mv temp $f
 	fi
 	tail -n +2 $f | sort -u > temp
+	echo "import postgres de $f"
 	psql -c "\copy ban_temp from temp with (format csv, delimiter ';', header false);"
 done
 
