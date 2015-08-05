@@ -106,6 +106,7 @@ update ban_temp set nom_voie=regexp_replace(nom_voie,' sq ',' square ') where no
 update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )st ','\1saint-') where nom_voie ~ '(^| )st ';
 update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )ste ','\1sainte-') where nom_voie ~ '(^| )ste ';
 update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )stes ','\1saintes-') where nom_voie ~ '(^| )stes ';
+update ban_temp set nom_voie=replace(nom_voie,' mqs',' marquis') where nom_voie like '% mqs%';
 
 -- TRA
 update ban_temp set nom_voie=regexp_replace(nom_voie,' gde rue ',' grande-rue ') where nom_voie like '% gde %';
