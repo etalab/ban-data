@@ -152,6 +152,18 @@ with u as (select b.code_insee as u_insee, nom_temp as u_nom, string_agg(distinc
 with u as (select b.code_insee as u_insee, nom_ld as u_nom, string_agg(distinct(f.id_voie),',') as u_code, count(distinct(f.id_voie)) as u_nb from ban_temp b left join dgfip_fantoir f on (b.code_insee=f.code_insee and f.date_annul='0000000' and nom_ld=replace(replace(replace(replace(trim(f.nature_voie||' '||f.libelle_voie),chr(39),' '),'-',' '),'.',' '),'  ',' ')) where nom_voie='' and nom_ld!='' and id_fantoir='' group by 1,2) update ban_temp set id_fantoir=u_code from u where code_insee=u_insee and nom_ld=u_nom and u_nb=1 and u_code ~ '^[ABX]';
 with u as (select b.code_insee as u_insee, nom_ld as u_nom, string_agg(distinct(f.id_voie),',') as u_code, count(distinct(f.id_voie)) as u_nb from ban_temp b left join dgfip_fantoir f on (b.code_insee=f.code_insee and nom_ld=replace(replace(replace(replace(trim(f.nature_voie||' '||f.libelle_voie),chr(39),' '),'-',' '),'.',' '),'  ',' ')) where nom_voie='' and nom_ld!='' and id_fantoir='' group by 1,2) update ban_temp set id_fantoir=u_code from u where code_insee=u_insee and nom_ld=u_nom and u_nb=1 and u_code ~ '^[ABX]';
 
+-- manque d'accentuation
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(allee)( |$)','\1allée\3') where nom_voie like '%allee%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'eglise','église') where nom_voie like '%l_eglise%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(residence)( |$)','\1résidence\3') where nom_voie like '%residence%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(cite)( |$)','\1cité\3') where nom_voie like '%cite%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(emile)( |$)','\1émile\3') where nom_voie like '%emile%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(marechal)( |$)','\1maréchal\3') where nom_voie like '%marechal%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,' etienne',' étienne') where nom_voie like '% etienne%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,' president',' président') where nom_voie like '% president%';
+
+-- update ban_temp set nom_voie=regexp_replace(nom_voie,'chÂteau','château') where nom_voie like '%chÂteau%';
+
 -- mise en forme nom_voie (capitalisation sauf articles)
 update ban_temp set nom_voie=replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(initcap(nom_voie),' Du ',' du '),' De ',' de '),' Le ',' le '),' La ',' la '),' Des ',' des '),' L'||chr(39),' l'||chr(39)),' D'||chr(39),' d'||chr(39)),' Au ',' au '),' Aux ',' aux '),' À ',' à '),' Et ',' et '),' Dit ',' dit '),' Dite ',' dite '),' En ',' en '),' Les ',' les '),' Ou ',' ou ');
 
@@ -175,7 +187,7 @@ update ban_temp set nom_voie=replace(nom_voie,'Saint ','Saint-') where nom_voie 
 update ban_temp set nom_voie=replace(nom_voie,'Sainte ','Sainte-') where nom_voie ~ 'Sainte ';
 
 -- L et D apostrophe...
-update ban_temp set nom_voie=replace(nom_voie,' D ',' d'||chr(39)) where nom_voie ~ ' D ';
+update ban_temp set nom_voie=replace(nom_voie,' D ',' d'||chr(39)) where nom_voie ~ ' D [^0-9]';
 update ban_temp set nom_voie=replace(nom_voie,' L ',' l'||chr(39)) where nom_voie ~ ' L ';
 
 -- nom_ld et alias identiques
