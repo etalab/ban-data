@@ -1,9 +1,10 @@
 # récupération et décompression du fichier FANTOIR
 
-FANTOIR=FANTOIR0415
+FANTOIR=FANTOIR0715
+URL=https://www.data.gouv.fr/s/resources/fichier-fantoir-des-voies-et-lieux-dits/community/20150806-165009/FANTOIR0715.zip
 
 cd ../data/dgfip
-wget -nc https://www.data.gouv.fr/s/resources/fichier-fantoir-des-voies-et-lieux-dits/20150512-104128/FANTOIR0415.zip
+wget -nc $URL
 unzip $FANTOIR.zip
 
 # import dans SQL en format fixe (delimiter et quote spéciaux pour ignorer)
