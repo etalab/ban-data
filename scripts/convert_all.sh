@@ -14,9 +14,8 @@ echo "`date +%H:%M:%S` Fusion et compression des fichiers"
 # fusion en un fichier unique
 truncate -s 0 ../out/ban-odbl.json
 for dep in {01..19} 2A 2B {21..95} {971..976} ; do
-	grep -v '^$' "../out/ban-odbl-$dep.json" >> ../out/ban-odbl.json
-	cat ../out/ban-odbl-$dep.json | bzip2 -9 -c > ../out/odbl/BAN_odbl-$dep.json.bz2
 	sh out_odbl.sh $dep
+	grep -v '^$' "../out/ban-odbl-$dep.json" >> ../out/ban-odbl.json
 done
 
 echo "`date +%H:%M:%S` fin de traitement"
