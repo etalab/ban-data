@@ -27,7 +27,7 @@ drop table poste_temp;
 -- création des index
 create index hexavia_matricule on poste_hexavia using spgist (matricule_voie) with (fillfactor=100);
 create index hexavia_insee on poste_hexavia using spgist (insee);
-create index hexaposte_cp on poste_hexaposte using spgist(cp);
+create index hexaposte_cp on poste_hexaposte using spgist(code_postal);
 create index hexaposte_insee on poste_hexaposte using spgist(insee);
 create index hexacle_voie on poste_hexacle using spgist(matricule);
 
