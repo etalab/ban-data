@@ -2,6 +2,9 @@ CSVDIR=../data/ign/livraison
 echo "suppression anciens fichiers CSV"
 rm -f $CSVDIR/*.csv
 echo "décompressions fichiers CSV"
+
+unzip -qjn $CSVDIR/$1.zip -d $CSVDIR
+
 for f in $CSVDIR/$1/*.zip; do unzip -qjn $f -d $CSVDIR; done
 rm -f $CSVDIR/*97*.csv
 
