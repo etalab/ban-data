@@ -26,6 +26,7 @@ from ban_$1 b
 join osm_communes g on (g.insee=code_insee)
 join cog_dep d on (d.dep=left(code_insee,2) or d.dep=left(code_insee,3))
 join cog_reg r on (r.reg=d.reg)
+where nom_voie||nom_ld!=''
 group by 1,2,3,4,7,8,9,10,g.statut,g.population,nom_voie
 order by 1,2,3) as d;
 "
