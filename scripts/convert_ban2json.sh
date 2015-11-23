@@ -13,7 +13,7 @@ CREATE TABLE ban_$DEP () INHERITS (ban_full);
 if file ../data/ign/*odbl*_"$DEP".csv | grep -q ISO
 then
 	# conversion UTF8 si ISO en entrée
-	iconv -f ISO8859-1 -t UTF8 ../data/ign/*odbl*_$DEP.csv > temp_$DEP
+	iconv -f WINDOWS-1252 -t UTF8 ../data/ign/*odbl*_$DEP.csv > temp_$DEP
 	rm -f ../data/ign/*odbl*_$DEP.csv
 	mv temp_$DEP ../data/ign/BAN_odbl_$DEP.csv
 fi
