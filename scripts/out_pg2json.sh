@@ -12,7 +12,7 @@ else
 'XXXX' end) || '_' || left(md5(format('n=%s,l=%s,a=%s,p=%s',nom_voie,nom_ld,alias,code_post)),6)
  as fantoir,
 
-case when (coalesce(nom_voie,'') !='' and coalesce(nom_ld,'') !='' and replace(upper(unaccent(coalesce(nom_voie,''))),'-',' ')!=replace(upper(unaccent(coalesce(nom_ld,''))),'-',' ')) then (coalesce(nom_voie,'')||', '||coalesce(nom_ld,'')) when (coalesce(nom_voie,'')='') then nom_ld else nom_voie end as nom_voie,
+replace(case when (coalesce(nom_voie,'') !='' and coalesce(nom_ld,'') !='' and replace(upper(unaccent(coalesce(nom_voie,''))),'-',' ')!=replace(upper(unaccent(coalesce(nom_ld,''))),'-',' ')) then (coalesce(nom_voie,'')||', '||coalesce(nom_ld,'')) when (coalesce(nom_voie,'')='') then nom_ld else nom_voie end,'\"','') as  nom_voie,
 code_post,
 round(avg(lat::numeric),6) as lat,
 round(avg(lon::numeric),6) as lon,
