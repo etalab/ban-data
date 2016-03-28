@@ -295,3 +295,8 @@ alter table ban_temp add id_voie text;
 -- recherche du code FANTOIR correspondant au lieu-dit et stockage dans id_ld
 with u as (select b.*, f.id_voie from (select code_insee, nom_voie, nom_temp from ban_temp where nom_voie!='' group by 1,2,3) as b left join dgfip_fantoir f on (f.code_insee=b.code_insee and f.lib_court=b.nom_temp) where id_voie is not null) update ban_temp b set id_voie=u.id_voie from u where b.code_insee=u.code_insee and b.nom_voie=u.nom_voie;
 
+-- ajout colonne géométrie
+alter table ban_temp add geom geometry;
+update ban_temp set geom = st_setsrid(st_makepoint(lat,lon),4326);
+create index ban_temp_geom on ban_temp using gist(geom);
+
