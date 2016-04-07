@@ -1,7 +1,7 @@
 -- script de mise à jour, correction et harmonisation des données
 
 -- code_post: "code_post est vide"
-with u as (select id, code_insee, code_post, string_agg(distinct(p.cp),',') as cp, count(distinct(p.cp)) as nb from ban_temp b left join poste_cp c on (c.cp=b.code_post) join poste_cp p on (p.insee=b.code_insee) where c.cp is null group by 1,2,3) update ban_temp b set code_post=u.cp from u where b.id=u.id and nb=1;
+with u as (select id, code_insee, code_post, string_agg(distinct(p.cp),',') as cp, count(distinct(p.cp)) as nb from ban_temp b left join poste_cp c on (c.cp=b.code_post) join poste_cp p on (p.insee=b.code_insee) where c.cp is null group by 1,2,3) update ban_temp b set code_post=u.cp from u where coalesce(b.code_post,'')='' and b.id=u.id and nb=1;
 
 -- nom_ld: suppression des *NOBDUNI*
 update ban_temp set nom_ld=replace(nom_ld,'*NOBDUNI*','') where nom_ld like '*NOBDUNI*%';
