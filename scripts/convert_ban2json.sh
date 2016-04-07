@@ -44,5 +44,10 @@ rm $TEMPDIR/clean_$DEP.sql
 
 echo "`date +%H:%M:%S` Export JSON dept $DEP"
 sh out_pg2json.sh $DEP > ../out/ban-odbl-$DEP.json
+
+
+echo "`date +%H:%M:%S` Export CSV par commune $DEP"
+sh out_csv_communes.sh $DEP
+
 echo "`date +%H:%M:%S` Terminé dept $DEP"
 
