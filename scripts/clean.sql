@@ -205,6 +205,7 @@ update ban_temp set nom_ld=regexp_replace(nom_ld,'^([A-Z]*) \1( |$)','\1\2') whe
 -- désabreviation de nom_ld
 update ban_temp set nom_ld=regexp_replace(nom_ld,'(^| )CH ','\1CHEMIN ') where nom_ld ~ '(^| )CH ';
 update ban_temp set nom_ld=regexp_replace(nom_ld,'^CHL( |$)','CHALET\1') where nom_ld ~ '^CHL( |$)';
+update ban_temp set nom_ld=regexp_replace(nom_ld,'^COR( |$)','CORNICHE\1') where nom_ld ~ '^COR( |$)' and not nom_ld ~ 'COR DE CHASSE';
 update ban_temp set nom_ld=regexp_replace(nom_ld,'(^| )CHP( |$)','\1CHAMP\2') where nom_ld ~ '(^| )CHP( |$)';
 update ban_temp set nom_ld=regexp_replace(nom_ld,'(^| )CHT( |$)','\1CHATEAU\2') where nom_ld ~ '(^| )CHT( |$)';
 update ban_temp set nom_ld=regexp_replace(nom_ld,'(^| )H L M( |$)','\1HLM\2') where nom_ld ~ '(^| )H L M( |$)';
