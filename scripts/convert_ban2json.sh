@@ -31,10 +31,16 @@ update ban_$DEP set nom_voie='' where nom_voie is null;
 update ban_$DEP set nom_ld='' where nom_ld is null;
 update ban_$DEP set alias='' where alias is null;
 update ban_$DEP set id_fantoir='' where id_fantoir is null;
+update ban_$DEP set rep='' where rep is null;
 
 -- création des index
 create index ban_id_$DEP on ban_$DEP using spgist(id);
 create index ban_insee_$DEP on ban_$DEP using spgist(code_insee);
+
+-- nettoyage nom_ld qui contient un code FANTOIR (issue #99)
+with u as (select b.id as u_id, libelle_voie as u_nom from ban_$DEP b join dgfip_fantoir f on (b.code_insee=f.code_insee and f.id_voie=nom_ld) where nom_ld ~ '^.[0-9][0-9][0-9]$')
+  update ban_$DEP set nom_ld=u_nom from u where id=u_id;
+
 "
 
 echo "`date +%H:%M:%S` Harmonisation dept $DEP"
