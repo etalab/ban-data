@@ -46,7 +46,7 @@ order by 1,2,3) as d;
 
 psql -t -P pager -A -c "
 SELECT '{\"id\": \"' || g.insee || (CASE WHEN min_cp!=cp.cp then '_'||cp.cp ELSE '' END)
-|| '\",\"type\": \"' || CASE WHEN population<1 THEN 'village' WHEN population<'10' THEN 'town' ELSE 'city' END
+|| '\",\"type\": \"city' ||
 || '\",\"name\": \"' || g.nom
 || '\",\"postcode\": \"' || cp.cp
 || '\",\"citycode\": \"' || g.insee
