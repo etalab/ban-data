@@ -7,9 +7,9 @@ SELECT '{\"id\": \"' || g.insee || (CASE WHEN min_cp!=cp.cp then '_'||cp.cp ELSE
 || '\",\"name\": \"' || g.nom
 || '\",\"postcode\": \"' || cp.cp
 || '\",\"citycode\": \"' || g.insee
-|| '\",\"lat\": \"' || round(case when g.insee like '97%' then ST_Y(ST_Transform(ST_PointOnSurface(wkb_geometry),4326))::numeric else st_y(st_transform(st_setsrid(ST_Point(x_chf_lieu*100,y_chf_lieu*100),2154),4326))::numeric END,6)
-|| '\",\"lon\": \"' || round(case when g.insee like '97%' then ST_X(ST_Transform(ST_PointOnSurface(wkb_geometry),4326))::numeric else st_x(st_transform(st_setsrid(ST_Point(x_chf_lieu*100,y_chf_lieu*100),2154),4326))::numeric END,6)
-|| '\",\"city\": \"' || g.nom
+|| '\",\"lat\": ' || round(case when g.insee like '97%' then ST_Y(ST_Transform(ST_PointOnSurface(wkb_geometry),4326))::numeric else st_y(st_transform(st_setsrid(ST_Point(x_chf_lieu*100,y_chf_lieu*100),2154),4326))::numeric END,6)
+|| ',\"lon\": ' || round(case when g.insee like '97%' then ST_X(ST_Transform(ST_PointOnSurface(wkb_geometry),4326))::numeric else st_x(st_transform(st_setsrid(ST_Point(x_chf_lieu*100,y_chf_lieu*100),2154),4326))::numeric END,6)
+|| ',\"city\": \"' || g.nom
 || '\",\"context\": \"' || case when g.insee LIKE '97%' then left(g.insee,3) else left(g.insee,2) end || ', ' || case when (nom_dep=g.nom or nom_dep=nom_reg) then nom_reg else nom_dep || ', ' || nom_reg end
 || '\", \"population\": ' || population
 || ', \"adm_weight\": ' || CASE WHEN statut LIKE 'Capital%' THEN 6 WHEN statut = 'Préfecture de régi' THEN 5 WHEN statut='Préfecture' THEN 4 WHEN statut LIKE 'Sous-pr%' THEN 3 WHEN statut='Chef-lieu canton' THEN 2 ELSE 1 END
