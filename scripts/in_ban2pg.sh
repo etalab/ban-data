@@ -40,6 +40,7 @@ update ban_temp set nom_ld='' where nom_ld is null;
 update ban_temp set nom_afnor='' where nom_afnor is null;
 update ban_temp set alias='' where alias is null;
 update ban_temp set id_fantoir='' where id_fantoir is null;
+update ban_temp set rep='' where rep is null;
 
 -- création des index
 create index ban_temp_id on ban_temp using spgist(id);
