@@ -26,4 +26,6 @@ rm regions-20170102*
 psql -c "
 create index osm_regions_2016_index on osm_regions_2016 using gist(wkb_geometry);
 create index osm_regions_2016_insee on osm_regions_2016 (insee);
+
+create or replace view dep_reg_2016 as select d.*, nom_reg, d2.tncc as dep_tncc, r2.nom as nom_reg2016 from cog_dep d join cog_reg r on (r.reg=d.reg) join insee_depts_2016 d2 on (d2.dep=d.dep) left join osm_regions_2016 r2 on (r2.insee=d2.region);
 "
