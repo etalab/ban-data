@@ -50,3 +50,22 @@ psql -c "update insee_cog_2015 set nccenr='Fœil' where insee='22059';" # probl�
 
 
 
+# liste des régions 2016 (noms temporaires !)
+wget -nc https://www.insee.fr/fr/statistiques/fichier/2114819/reg2016-txt.zip
+unzip reg2016-txt.zip
+cat reg2016.txt | iconv -f iso88591 -t utf8 | tr '\t' ',' > reg2016.csv
+mv reg2016.csv ../data/insee/
+rm reg2016*
+
+psql -c "drop table if exists insee_regions_2016;create table insee_regions_2016 (REGION text,CHEFLIEU text,TNCC text,NCC text,NCCENR text);"
+psql -c "\copy insee_regions_2016 from ../data/insee/reg2016.csv with (format csv, header true);"
+
+# liste des départements 2016 (et appartenance aux régions)
+wget -nc https://www.insee.fr/fr/statistiques/fichier/2114819/depts2016-txt.zip
+unzip depts2016-txt.zip
+cat depts2016.txt | iconv -f iso88591 -t utf8 | tr '\t' ',' > depts2016.csv
+mv depts2016.csv ../data/insee/
+rm depts2016*
+
+psql -c "drop table if exists insee_depts_2016;create table insee_depts_2016 (REGION text ,DEP text,CHEFLIEU text,TNCC text,NCC text,NCCENR text);"
+psql -c "\copy insee_depts_2016 from ../data/insee/depts2016.csv with (format csv, header true);"
