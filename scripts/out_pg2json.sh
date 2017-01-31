@@ -3,12 +3,11 @@
 # liste des communes
 psql -t -P pager -A -c "
 SELECT '{\"id\": \"' || g.insee || (CASE WHEN min_cp!=cp.cp then '_'||cp.cp ELSE '' END)
-|| '\",\"type\": \"' || CASE WHEN population<1 THEN 'village' WHEN population<'10' THEN 'town' ELSE 'city' END
-|| '\",\"name\": \"' || g.nom
+|| '\",\"type\": \"municipality\",\"name\": \"' || g.nom
 || '\",\"postcode\": \"' || cp.cp
 || '\",\"citycode\": \"' || g.insee
-|| '\",\"lat\": ' || round(case when g.insee like '97%' then ST_Y(ST_Transform(ST_PointOnSurface(wkb_geometry),4326))::numeric else st_y(st_transform(st_setsrid(ST_Point(x_chf_lieu*100,y_chf_lieu*100),2154),4326))::numeric END,6)
-|| ',\"lon\": ' || round(case when g.insee like '97%' then ST_X(ST_Transform(ST_PointOnSurface(wkb_geometry),4326))::numeric else st_x(st_transform(st_setsrid(ST_Point(x_chf_lieu*100,y_chf_lieu*100),2154),4326))::numeric END,6)
+|| '\",\"lat\": ' || round(case when g.insee like '97%' or x_chf_lieu is null then ST_Y(ST_Transform(ST_PointOnSurface(wkb_geometry),4326))::numeric else st_y(st_transform(st_setsrid(ST_Point(x_chf_lieu*100,y_chf_lieu*100),2154),4326))::numeric END,6)
+|| ',\"lon\": ' || round(case when g.insee like '97%' or x_chf_lieu is null then ST_X(ST_Transform(ST_PointOnSurface(wkb_geometry),4326))::numeric else st_x(st_transform(st_setsrid(ST_Point(x_chf_lieu*100,y_chf_lieu*100),2154),4326))::numeric END,6)
 || ',\"city\": \"' || g.nom
 || '\",\"context\": \"' || case when g.insee LIKE '97%' then left(g.insee,3) else left(g.insee,2) end || ', ' || case when (dr.nom_dep=g.nom or dr.nom_dep=dr.nom_reg) then case when dr.nom_reg=dr.nom_reg2016 then dr.nom_reg2016 else format('%s (%s)', dr.nom_reg2016, dr.nom_reg) end else dr.nom_dep || ', ' || case when dr.nom_reg=dr.nom_reg2016 then dr.nom_reg2016 else format('%s (%s)', dr.nom_reg2016, dr.nom_reg) end end
 || '\", \"population\": ' || population
