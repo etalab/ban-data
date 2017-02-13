@@ -68,6 +68,6 @@ join dep_reg_2016 dr on (dr.dep=d.dep)
 left join insee_communes_nouvelles cn on (cn.insee=b.code_insee)
 left join osm_communes_2015 g2 on (st_contains(g2.wkb_geometry, b.geom))
 where nom_voie||nom_ld!=''
-group by 1,2,4
+group by 1,2,4,alias
 order by 1,2,3) as d;
 "
