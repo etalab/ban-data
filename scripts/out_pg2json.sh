@@ -27,11 +27,12 @@ ORDER BY g.insee, cp.cp;
 
 # adresses regroupées par voie/lieu-dit/CP
 psql --no-align --tuples-only -P pager -qc "
-select format('{\"id\":\"%s_%s\",\"type\":\"%s\",\"name\":\"%s\",\"postcode\":\"%s\",\"citycode\":\"%s\",\"lon\":%s,\"lat\": %s,\"city\":\"%s\",\"context\":\"%s\",\"importance\":%s,\"housenumbers\":{%s}}',
+select format('{\"id\":\"%s_%s\",\"type\":\"%s\",\"name\":\"%s\" %s,\"postcode\":\"%s\",\"citycode\":\"%s\",\"lon\":%s,\"lat\": %s,\"city\":\"%s\",\"context\":\"%s\",\"importance\":%s,\"housenumbers\":{%s}}',
   code_insee,
   fantoir,
   type,
   case when nom_voie='' then nom_commune when ancienne_commune='' then nom_voie else replace(nom_voie,' '||ancienne_commune,'') || ' ' || ancienne_commune end,
+  case when alias !='' then format(',\"alias\":\"%s\"', alias) else '' end,
   code_post,
   code_insee,
   lat,
