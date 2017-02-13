@@ -20,7 +20,9 @@ join (select insee, min(cp) as min_cp from poste_cp group by 1) as cp2 on (cp2.i
 join cog_dep d on (d.dep=left(g.insee,2) or d.dep=left(g.insee,3))
 join cog_reg r on (r.reg=d.reg)
 join dep_reg_2016 dr on (dr.dep=d.dep)
-WHERE g.insee like '$1%' order by g.insee, cp.cp;
+WHERE g.insee like '$1%'
+GROUP BY 1,g.insee, cp.cp
+ORDER BY g.insee, cp.cp;
 " | grep id
 
 # adresses regroupées par voie/lieu-dit/CP
