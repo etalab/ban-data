@@ -15,3 +15,6 @@ insert into libelles (select lib_court as long, regexp_replace(regexp_replace(li
 # mise à jour des abréviations à appliquer
 psql -c "TRUNCATE table abbrev;"
 psql -c "\copy abbrev from ../data/abbreviations.csv WITH (FORMAT CSV, HEADER TRUE)"
+
+# on lance la mise à jour pour FANTOIR
+sh abrev_update.sh
