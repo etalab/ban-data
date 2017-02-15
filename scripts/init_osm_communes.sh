@@ -33,7 +33,7 @@ create index osm_communes_2016_insee on osm_communes_2016 (insee);
 # limites communes au 1/1/2017 pour les fusions
 wget -nc http://osm13.openstreetmap.fr/~cquest/openfla/export/communes-20170111-shp.zip
 unzip -u -o communes-20170111-shp.zip
-ogr2ogr -t_srs EPSG:4326 -f PostgreSQL PG: communes-20170111-shp/*.shp -overwrite -nlt GEOMETRY -nln osm_communes_2017 -skipfailures
+ogr2ogr -t_srs EPSG:4326 -f PostgreSQL PG: communes-20170112.shp -overwrite -nlt GEOMETRY -nln osm_communes_2017 -skipfailures
 psql -c "
 alter table osm_communes_2017 drop ogc_fid;
 create index osm_communes_2017_insee on osm_communes_2017 (insee);
