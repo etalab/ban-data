@@ -11,3 +11,7 @@ create index libelles_court_trgm on libelles using gist (court gist_trgm_ops);
 insert into libelles (select lib_court as long, regexp_replace(regexp_replace(lib_court,'[^A-Z 0-9]',' ','g'),' +',' ','g') as court from dgfip_fantoir group by 1,2);
 
 "
+
+# mise à jour des abréviations à appliquer
+psql -c "TRUNCATE table abbrev;"
+psql -c "\copy abbrev from ../data/abbreviations.csv WITH (FORMAT CSV, HEADER TRUE)"

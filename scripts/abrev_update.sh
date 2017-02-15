@@ -1,8 +1,4 @@
 
-# mise à jour des abréviations à appliquer
-psql -c "TRUNCATE table abbrev;"
-psql -c "\copy abbrev from ../data/abbreviations.csv WITH (FORMAT CSV, HEADER TRUE)"
-
 # suppression des mot doublés
 psql -c "UPDATE libelles SET court=regexp_replace(court,' ([A-Z0-9]+) \1 ',' \1 ','g') WHERE court ~ ' ([A-Z0-9]+) \1 ';"
 
