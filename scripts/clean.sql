@@ -181,6 +181,7 @@ update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Chenes)( |$)','\1Ch�
 update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Chene)( |$)','\1Chêne\3') where nom_voie like '%Chene%';
 update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Franche.Comte)( |$)','\1Franche-Comté\3') where nom_voie like '%Franche_Comte%';
 update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Francois)( |$)','\1François\3') where nom_voie like '%Francois%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Clémenceau)( |$)','\1Clemenceau\3') where nom_voie like '%Clémenceau%';
 
 -- Saint et Sainte avec tiret
 update ban_temp set nom_voie=replace(nom_voie,'Saint ','Saint-') where nom_voie ~ 'Saint ';
@@ -287,17 +288,31 @@ with u as (select * from abbrev where txt_long != txt_court ORDER BY length(txt_
 alter table ban_temp add id_ld text;
 
 -- recherche du code FANTOIR correspondant au lieu-dit et stockage dans id_ld
-with u as (select b.*, f.id_voie from (select code_insee, nom_ld, ld_temp from ban_temp where nom_ld!='' group by 1,2,3) as b left join dgfip_fantoir f on (f.code_insee=b.code_insee and f.lib_court=coalesce(b.ld_temp,replace(replace(b.nom_ld,chr(39),' '),'-',' '))) where id_voie is not null) update ban_temp b set id_ld=u.id_voie from u where b.code_insee=u.code_insee and b.nom_ld=u.nom_ld;
+with u as (select b.code_insee, nom_ld, f.fantoir from ban_temp b left join libelles l1 on (l1.long=upper(unaccent(nom_ld))) left join libelles l2 on (l2.court=l1.court and l2.long!=l1.long) join dgfip_fantoir f on (f.lib_court in (l2.long,l1.long) and f.code_insee=b.code_insee) where b.id_ld is null and nom_ld != '' group by 1,2,3) update ban_temp SET id_ld = fantoir from u where code_insee=u_insee and nom_ld=u_nom;
 
 
 -- ajout colonne pour le code FANTOIR de la voie recalculé
 alter table ban_temp add id_voie text;
 
--- recherche du code FANTOIR correspondant au lieu-dit et stockage dans id_ld
-with u as (select b.*, f.id_voie from (select code_insee, nom_voie, nom_temp from ban_temp where nom_voie!='' group by 1,2,3) as b left join dgfip_fantoir f on (f.code_insee=b.code_insee and f.lib_court=b.nom_temp) where id_voie is not null) update ban_temp b set id_voie=u.id_voie from u where b.code_insee=u.code_insee and b.nom_voie=u.nom_voie;
+-- recherche du code FANTOIR correspondant à la voie et stockage dans id_voie
+with u as (select b.code_insee as u_insee, nom_voie as u_nom, f.fantoir from ban_temp b left join libelles l1 on (l1.long=upper(unaccent(nom_voie))) left join libelles l2 on (l2.court=l1.court and l2.long!=l1.long) join dgfip_fantoir f on (f.lib_court in (l2.long,l1.long) and f.code_insee=b.code_insee)  where b.id_voie is null and nom_voie != '' group by 1,2,3) update ban_temp SET id_voie = fantoir from u where code_insee=u_insee and nom_voie=u_nom;
+
+-- ajout colonne anciens noms de commune
+alter table ban_temp add nom_fusion text;
+-- on élimine les anciens noms identiques dans nom_voie et nom_ld
+with u as (select id as u_id, trim(regexp_replace(nom_ld,'\(.*','')) as ld from ban_temp where nom_voie like '%(%' and nom_ld like '%(%' and upper(unaccent(regexp_replace(nom_voie,'^.*\(','(')))=upper(unaccent(regexp_replace(nom_ld,'^.*\(','(')))) update ban_temp set nom_ld=ld from u where id=u_id;
+-- on sépare les anciens noms entre parenthèse de nom_voie
+update ban_temp set nom_fusion = regexp_replace(nom_voie, '^.*\((.*)\)','\1') where nom_voie ~ '\(';
+update ban_temp set nom_voie = trim(regexp_replace(nom_voie,'\(.*','')) where nom_voie ~ '\(';
+-- on sépare les anciens noms entre parenthèse du nom_ld
+update ban_temp set nom_fusion = coalesce(nom_fusion||', ','') || regexp_replace(nom_ld, '^.*\((.*)\)','\1') where nom_ld ~ '\(';
+update ban_temp set nom_ld = trim(regexp_replace(nom_ld,'\(.*','')) where nom_ld ~ '\(';
+-- on complète nom_fusion avec le nom de l'ancienne commune si il n'est pas déjà présent
+with u as (select id as u_id, coalesce(nom_fusion||', ','')||nom_delegue as nom_2016 from ban_temp b join fusion2016 f on (f.insee=b.code_insee and ST_Contains(f.geom, b.geom) and replace(upper(unaccent(coalesce(b.nom_fusion,''))),'-',' ') !~ replace(upper(unaccent(f.nom_delegue)),'-',' '))) update ban_temp set nom_fusion=nom_2016 from u where id=u_id;
+-- pareil pour les fusions de 2017
+with u as (select id as u_id, coalesce(nom_fusion||', ','')||nom_delegue as nom_2017 from ban_temp b join fusion2017 f on (f.insee=b.code_insee and ST_Contains(f.geom, b.geom) and replace(upper(unaccent(coalesce(b.nom_fusion,''))),'-',' ') !~ replace(upper(unaccent(f.nom_delegue)),'-',' '))) update ban_temp set nom_fusion=nom_2017 from u where id=u_id;
 
 -- ajout colonne géométrie
 alter table ban_temp add geom geometry;
 update ban_temp set geom = st_setsrid(st_makepoint(lat,lon),4326);
 create index ban_temp_geom on ban_temp using gist(geom);
-
