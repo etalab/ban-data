@@ -1,22 +1,43 @@
 # import des limites administratives issues d'OSM
 
 cd ../data/osm/
+
+# détail communes (2014)
 wget -nc http://osm13.openstreetmap.fr/~cquest/openfla/export/communes-plus-20140630-100m-shp.zip
-unzip -o communes-plus-20140630-100m-shp.zip
+unzip -u -o communes-plus-20140630-100m-shp.zip
 ogr2ogr -t_srs EPSG:4326 -f PostgreSQL PG: communes-plus-20140630-100m-shp/communes-plus-20140630-100m.shp -overwrite -nlt GEOMETRY -nln osm_communes -skipfailures
 psql -c "
 create index osm_communes_index on osm_communes using gist(wkb_geometry);
 create index osm_communes_insee on osm_communes (insee);
 "
 
+# limites communes au 1/1/2015
 wget -nc http://osm13.openstreetmap.fr/~cquest/openfla/export/communes-20150101-5m-shp.zip
-unzip -o communes-20150101-5m-shp.zip
+unzip -u -o communes-20150101-5m-shp.zip
 ogr2ogr -t_srs EPSG:4326 -f PostgreSQL PG: communes-plus-20150101-5m-shp/communes-plus-20150101-5m.shp -overwrite -nlt GEOMETRY -nln osm_communes_2015 -skipfailures
 psql -c "
+alter table osm_communes_2015 drop ogc_fid;
 create index osm_communes_2015_index on osm_communes_2015 using gist(wkb_geometry);
 create index osm_communes_2015_insee on osm_communes_2015 (insee);
 "
 
+# limites communes au 1/1/2016 pour les fusions
+wget -nc http://osm13.openstreetmap.fr/~cquest/openfla/export/communes-20160119-shp.zip
+unzip -u -o communes-20160119-shp.zip
+ogr2ogr -t_srs EPSG:4326 -f PostgreSQL PG: communes-20160119.shp -overwrite -nlt GEOMETRY -nln osm_communes_2016 -skipfailures
+psql -c "
+alter table osm_communes_2016 drop ogc_fid;
+create index osm_communes_2016_insee on osm_communes_2016 (insee);
+"
+
+# limites communes au 1/1/2017 pour les fusions
+wget -nc http://osm13.openstreetmap.fr/~cquest/openfla/export/communes-20170111-shp.zip
+unzip -u -o communes-20170111-shp.zip
+ogr2ogr -t_srs EPSG:4326 -f PostgreSQL PG: communes-20170111-shp/*.shp -overwrite -nlt GEOMETRY -nln osm_communes_2017 -skipfailures
+psql -c "
+alter table osm_communes_2017 drop ogc_fid;
+create index osm_communes_2017_insee on osm_communes_2017 (insee);
+"
 
 # liste des régions 2016 (noms finaux)
 wget -nc http://osm13.openstreetmap.fr/~cquest/openfla/export/regions-20170102-shp.zip
