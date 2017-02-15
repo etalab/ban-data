@@ -1,8 +1,8 @@
 # création et mise à jour de la table des libellés
 
 psql -c "
-drop table if exists libelle;
-create table libelle (long text, court text);
+drop table if exists libelles;
+create table libelles (long text, court text);
 create index libelles_long on libelles (long);
 create index libelles_court on libelles (court);
 create index libelles_court_trgm on libelles using gist (court gist_trgm_ops);
