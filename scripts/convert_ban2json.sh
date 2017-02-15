@@ -36,6 +36,9 @@ update ban_$DEP set rep='' where rep is null;
 -- création des index
 create index ban_id_$DEP on ban_$DEP using spgist(id);
 create index ban_insee_$DEP on ban_$DEP using spgist(code_insee);
+-- index trigrams pour accélérer les regexp / LIKE
+create index ban_nom_voie_$DEP on ban_$DEP using  gist (nom_voie gist_trgm_ops);
+create index ban_nom_ld_$DEP on ban_$DEP using  gist (nom_ld gist_trgm_ops);
 
 -- nettoyage nom_ld qui contient un code FANTOIR (issue #99)
 with u as (select b.id as u_id, libelle_voie as u_nom from ban_$DEP b join dgfip_fantoir f on (b.code_insee=f.code_insee and f.id_voie=nom_ld) where nom_ld ~ '^.[0-9][0-9][0-9]$')
@@ -56,4 +59,3 @@ echo "`date +%H:%M:%S` Export CSV par commune $DEP"
 sh out_csv_communes.sh $DEP
 
 echo "`date +%H:%M:%S` Terminé dept $DEP"
-
