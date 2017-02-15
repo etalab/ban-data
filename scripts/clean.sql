@@ -285,6 +285,11 @@ with u as (select * from abbrev where txt_long != txt_court ORDER BY length(txt_
 -- tentative rapprochement
 -- select b.*, trim(regexp_replace(regexp_replace(replace(trim(f.nature_voie || ' ' || f.libelle_voie),chr(39),' '),'(^| )(LE|LA|LES|L|D|DE|DES|DU|DE LA|DE L|A|AU|AUX)( |$)',' ','g'),' +',' ','g')), f.id_voie from (select code_insee, nom_ld, ld_temp from ban_11 where ld_temp is not null and id_fantoir='' and nom_voie='' group by 1,2,3) as b left join dgfip_fantoir f on (f.code_insee=b.code_insee and b.ld_temp~f.dernier_mot) order by 1,2;
 
+-- ajout colonne géométrie
+alter table ban_temp add geom geometry;
+update ban_temp set geom = st_setsrid(st_makepoint(lat,lon),4326);
+create index ban_temp_geom on ban_temp using gist(geom);
+
 -- ajout colonne pour le code FANTOIR recalculé pour la voie et le lieu-dit
 alter table ban_temp add id_ld text;
 alter table ban_temp add id_voie text;
@@ -310,10 +315,6 @@ with u as (select b.code_insee as u_insee, nom_voie as u_nom, f.fantoir from ban
 -- recherche du code FANTOIR correspondant à la voie et stockage dans id_voie (communes fusionnées en 2016)
 with u as (select b.code_insee as u_insee, nom_voie as u_nom, f.fantoir from ban_temp b join fusion2016 fu on (fu.insee=b.code_insee and ST_Contains(fu.geom, b.geom)) left join libelles l1 on (l1.long=upper(unaccent(nom_voie))) left join libelles l2 on (l2.court=l1.court and l2.long!=l1.long) join dgfip_fantoir f on (f.lib_court in (l2.long,l1.long) and f.code_insee=fu.insee_delegue)  where b.id_voie is null and nom_voie != '' group by 1,2,3) update ban_temp SET id_voie = fantoir from u where code_insee=u_insee and nom_voie=u_nom;
 
--- ajout colonne géométrie
-alter table ban_temp add geom geometry;
-update ban_temp set geom = st_setsrid(st_makepoint(lat,lon),4326);
-create index ban_temp_geom on ban_temp using gist(geom);
 
 -- ajout colonne anciens noms de commune
 alter table ban_temp add nom_fusion text;
