@@ -316,8 +316,10 @@ with u as (select b.code_insee as u_insee, nom_voie as u_nom, f.fantoir from ban
 with u as (select b.code_insee as u_insee, nom_voie as u_nom, f.fantoir from ban_temp b join fusion2016 fu on (fu.insee=b.code_insee and ST_Contains(fu.geom, b.geom)) left join libelles l1 on (l1.long=upper(unaccent(nom_voie))) left join libelles l2 on (l2.court=l1.court and l2.long!=l1.long) join dgfip_fantoir f on (f.lib_court in (l2.long,l1.long) and f.code_insee=fu.insee_delegue)  where b.id_voie is null and nom_voie != '' group by 1,2,3) update ban_temp SET id_voie = fantoir from u where code_insee=u_insee and nom_voie=u_nom;
 
 
--- ajout colonne anciens noms de commune
+-- ajout colonne anciens noms de commune et anciens code insee
 alter table ban_temp add nom_fusion text;
+alter table ban_temp add insee_fusion text;
+
 -- on élimine les anciens noms identiques dans nom_voie et nom_ld
 with u as (select id as u_id, trim(regexp_replace(nom_ld,'\(.*','')) as ld from ban_temp where nom_voie like '%(%' and nom_ld like '%(%' and upper(unaccent(regexp_replace(nom_voie,'^.*\(','(')))=upper(unaccent(regexp_replace(nom_ld,'^.*\(','(')))) update ban_temp set nom_ld=ld from u where id=u_id;
 -- on sépare les anciens noms entre parenthèse de nom_voie
@@ -329,3 +331,8 @@ update ban_temp set nom_ld = trim(regexp_replace(nom_ld,'\(.*','')) where nom_ld
 with u as (select id as u_id, coalesce(nom_fusion||', ','')||nom_delegue as nom_2016 from ban_temp b join fusion2016 f on (f.insee=b.code_insee and ST_Contains(f.geom, b.geom) and replace(upper(unaccent(coalesce(b.nom_fusion,''))),'-',' ') !~ replace(upper(unaccent(f.nom_delegue)),'-',' '))) update ban_temp set nom_fusion=nom_2016 from u where id=u_id;
 -- pareil pour les fusions de 2017
 with u as (select id as u_id, coalesce(nom_fusion||', ','')||nom_delegue as nom_2017 from ban_temp b join fusion2017 f on (f.insee=b.code_insee and ST_Contains(f.geom, b.geom) and replace(upper(unaccent(coalesce(b.nom_fusion,''))),'-',' ') !~ replace(upper(unaccent(f.nom_delegue)),'-',' '))) update ban_temp set nom_fusion=nom_2017 from u where id=u_id;
+
+-- nettoyage/harmonisation des anciens noms de communes
+with u as (select nom_fusion as u_fusion, regexp_replace(nom_fusion, reg, '\1'||nom_delegue||'\2','gi') as u_clean from (select nom_fusion from ban_temp where nom_fusion is not null group by 1) b join (select nom_delegue, '(^| )'||regexp_replace(upper(unaccent(nom_delegue)),'[^A-Z]','.','g')||'(,|$)' as reg from fusion2017) as n on (upper(unaccent(nom_fusion))~reg) where nom_fusion is not null) update ban_temp set nom_fusion = u_clean from u where nom_fusion=u_fusion;
+
+with u as (select nom_fusion as u_fusion, regexp_replace(nom_fusion, reg, '\1'||nom_delegue||'\2','gi') as u_clean from (select nom_fusion from ban_temp where nom_fusion is not null group by 1) b join (select nom_delegue, '(^| )'||regexp_replace(upper(unaccent(nom_delegue)),'[^A-Z]','.','g')||'(,|$)' as reg from fusion2016) as n on (upper(unaccent(nom_fusion))~reg) where nom_fusion is not null) update ban_temp set nom_fusion = u_clean from u where nom_fusion=u_fusion;
