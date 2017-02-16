@@ -64,7 +64,7 @@ max(dr.nom_dep) as nom_dep,
 max(case when dr.nom_reg=dr.nom_reg2016 then dr.nom_reg2016 else format('%s (%s)', dr.nom_reg2016, dr.nom_reg) end) as nom_reg,
 max(case when coalesce(id_voie,id_ld,id_fantoir) > '9999' then 'locality' else 'street' end) as type,
 round(log((CASE WHEN (code_post LIKE '75%' OR max(g.statut) LIKE 'Capital%') THEN 6 WHEN (code_post LIKE '690%' OR code_post LIKE '130%' OR max(g.statut) = 'Préfecture de régi') THEN 5 WHEN max(g.statut)='Préfecture' THEN 4 WHEN max(g.statut) LIKE 'Sous-pr%' THEN 3 WHEN max(g.statut)='Chef-lieu canton' THEN 2 ELSE 1 END)+log(max(g.population)+1)/3)::numeric*log(1+log(count(b.*)+1)+log(CASE WHEN max(nom_voie) like 'Boulevard%' THEN 4 WHEN max(nom_voie) LIKE 'Place%' THEN 4 WHEN max(nom_voie) LIKE 'Espl%' THEN 4 WHEN max(nom_voie) LIKE 'Av%' THEN 3 WHEN max(nom_voie) LIKE 'Rue %' THEN 2 ELSE 1 END))::numeric,4)::text as importance,
-string_agg(format('\"%s\":{\"lat\":%s,\"lon\":%s,\"id\":\"%s\",\"x\":%s,\"y\":%s}',trim(numero||' '||rep),round(lon::numeric,6)::text,round(lat::numeric,6)::text,id),',' order by numero||rep,id,x,y) as housenumbers,
+string_agg(format('\"%s\":{\"lat\":%s,\"lon\":%s,\"id\":\"%s\",\"x\":%s,\"y\":%s}',trim(numero||' '||rep),round(lon::numeric,6)::text,round(lat::numeric,6)::text,id,x,y),',' order by numero||rep,id) as housenumbers,
 max(case when nom_fusion is not null then format('(%s)',nom_fusion) else '' end) as ancienne_commune, alias
 from ban_$1 b
 join osm_communes g on (g.insee=code_insee)
