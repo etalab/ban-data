@@ -26,8 +26,22 @@ wget -nc http://osm13.openstreetmap.fr/~cquest/openfla/export/communes-20160119-
 unzip -u -o communes-20160119-shp.zip
 ogr2ogr -t_srs EPSG:4326 -f PostgreSQL PG: communes-20160119.shp -overwrite -nlt GEOMETRY -nln osm_communes_2016 -skipfailures
 psql -c "
+-- nettoyage après import ogr2ogr
 alter table osm_communes_2016 drop ogc_fid;
 create index osm_communes_2016_insee on osm_communes_2016 (insee);
+-- vue pour les fusions 2016
+create materialized view fusion2016 as SELECT f.insee,                                                                                                                                         f.nom AS cheflieu,
+    co.insee AS insee_delegue,
+    co.nom AS nom_delegue,
+    2016 AS annee,
+    co.wkb_geometry AS geom
+   FROM osm_communes_2015 co
+     LEFT JOIN osm_communes_2016 cn ON co.insee::text = cn.insee::text AND upper(unaccent(replace(co.nom::text, '-'::text, ' '::text))) = upper(unaccent(replace(cn.nom::text, '-'::text, ' '::text)))
+     LEFT JOIN osm_communes_2016 f ON st_intersects(st_centroid(co.wkb_geometry), f.wkb_geometry)
+  WHERE cn.insee IS NULL AND (f.insee::text <> ALL (ARRAY['75056'::character varying, '13055'::character varying, '69123'::character varying]::text[]));
+-- index sur la vue matérialisée
+create index fusion2016_insee on fusion2016 (insee);
+create index fusion2016_geom on fusion2016 using gist(geom);
 "
 
 # limites communes au 1/1/2017 pour les fusions
@@ -35,8 +49,22 @@ wget -nc http://osm13.openstreetmap.fr/~cquest/openfla/export/communes-20170111-
 unzip -u -o communes-20170111-shp.zip
 ogr2ogr -t_srs EPSG:4326 -f PostgreSQL PG: communes-20170112.shp -overwrite -nlt GEOMETRY -nln osm_communes_2017 -skipfailures
 psql -c "
+-- nettoyage après import ogr2ogr
 alter table osm_communes_2017 drop ogc_fid;
 create index osm_communes_2017_insee on osm_communes_2017 (insee);
+-- vue pour les fusions 2017
+create materialized view fusion2017 as  SELECT f.insee,                                                                                                                                        f.nom AS cheflieu,
+    co.insee AS insee_delegue,
+    co.nom AS nom_delegue,
+    2017 AS annee,
+    co.wkb_geometry AS geom
+   FROM osm_communes_2016 co
+     LEFT JOIN osm_communes_2017 cn ON co.insee::text = cn.insee::text AND upper(unaccent(replace(co.nom::text, '-'::text, ' '::text))) = upper(unaccent(replace(cn.nom::text, '-'::text, ' '::text)))
+     LEFT JOIN osm_communes_2017 f ON st_intersects(st_centroid(co.wkb_geometry), f.wkb_geometry)
+  WHERE cn.insee IS NULL AND (f.insee::text <> ALL (ARRAY['75056'::character varying, '13055'::character varying, '69123'::character varying]::text[]));
+-- index sur la vue matérialisée
+create index fusion2017_insee on fusion2017 (insee);
+create index fusion2017_geom on fusion2017 using gist(geom);
 "
 
 # liste des régions 2016 (noms finaux)
