@@ -295,16 +295,13 @@ alter table ban_temp add id_ld text;
 alter table ban_temp add id_voie text;
 
 -- recherche du code FANTOIR correspondant au lieu-dit et stockage dans id_ld
-with u as (select b.code_insee as u_insee, nom_ld, f.fantoir from ban_temp b left join libelles l1 on (l1.long=upper(unaccent(nom_ld))) left join libelles l2 on (l2.court=l1.court and l2.long!=l1.long) join dgfip_fantoir f on (f.lib_court in (l2.long,l1.long) and f.code_insee=b.code_insee) where b.id_ld is null and nom_ld != '' group by 1,2,3)
-update ban_temp SET id_ld = fantoir from u where code_insee=u_insee and nom_ld=u_nom;
+with u as (select b.code_insee as u_insee, nom_ld as u_nom, f.fantoir from ban_temp b left join libelles l1 on (l1.long=upper(unaccent(nom_ld))) left join libelles l2 on (l2.court=l1.court and l2.long!=l1.long) join dgfip_fantoir f on (f.lib_court in (l2.long,l1.long) and f.code_insee=b.code_insee) where b.id_ld is null and nom_ld != '' group by 1,2,3) update ban_temp SET id_ld = fantoir from u where code_insee=u_insee and nom_ld=u_nom;
 
 -- recherche du code FANTOIR correspondant au lieu-dit et stockage dans id_ld (communes fusionnées en 2017)
-with u as (select b.code_insee as u_insee, nom_ld, f.fantoir from ban_temp b join fusion2017 fu on (fu.insee=b.code_insee and ST_Contains(fu.geom, b.geom)) left join libelles l1 on (l1.long=upper(unaccent(nom_ld))) left join libelles l2 on (l2.court=l1.court and l2.long!=l1.long) join dgfip_fantoir f on (f.lib_court in (l2.long,l1.long) and f.code_insee=fu.insee_delegue) where b.id_ld is null and nom_ld != '' group by 1,2,3)
-update ban_temp SET id_ld = fantoir from u where code_insee=u_insee and nom_ld=u_nom;
+with u as (select b.code_insee as u_insee, nom_ld as u_nom, f.fantoir from ban_temp b join fusion2017 fu on (fu.insee=b.code_insee and ST_Contains(fu.geom, b.geom)) left join libelles l1 on (l1.long=upper(unaccent(nom_ld))) left join libelles l2 on (l2.court=l1.court and l2.long!=l1.long) join dgfip_fantoir f on (f.lib_court in (l2.long,l1.long) and f.code_insee=fu.insee_delegue) where b.id_ld is null and nom_ld != '' group by 1,2,3) update ban_temp SET id_ld = fantoir from u where code_insee=u_insee and nom_ld=u_nom;
 
 -- recherche du code FANTOIR correspondant au lieu-dit et stockage dans id_ld (communes fusionnées en 2016)
-with u as (select b.code_insee as u_insee, nom_ld, f.fantoir from ban_temp b join fusion2016 fu on (fu.insee=b.code_insee and ST_Contains(fu.geom, b.geom)) left join libelles l1 on (l1.long=upper(unaccent(nom_ld))) left join libelles l2 on (l2.court=l1.court and l2.long!=l1.long) join dgfip_fantoir f on (f.lib_court in (l2.long,l1.long) and f.code_insee=fu.insee_delegue) where b.id_ld is null and nom_ld != '' group by 1,2,3)
-update ban_temp SET id_ld = fantoir from u where code_insee=u_insee and nom_ld=u_nom;
+with u as (select b.code_insee as u_insee, nom_ld as u_nom, f.fantoir from ban_temp b join fusion2016 fu on (fu.insee=b.code_insee and ST_Contains(fu.geom, b.geom)) left join libelles l1 on (l1.long=upper(unaccent(nom_ld))) left join libelles l2 on (l2.court=l1.court and l2.long!=l1.long) join dgfip_fantoir f on (f.lib_court in (l2.long,l1.long) and f.code_insee=fu.insee_delegue) where b.id_ld is null and nom_ld != '' group by 1,2,3) update ban_temp SET id_ld = fantoir from u where code_insee=u_insee and nom_ld=u_nom;
 
 -- recherche du code FANTOIR correspondant à la voie et stockage dans id_voie
 with u as (select b.code_insee as u_insee, nom_voie as u_nom, f.fantoir from ban_temp b left join libelles l1 on (l1.long=upper(unaccent(nom_voie))) left join libelles l2 on (l2.court=l1.court and l2.long!=l1.long) join dgfip_fantoir f on (f.lib_court in (l2.long,l1.long) and f.code_insee=b.code_insee)  where b.id_voie is null and nom_voie != '' group by 1,2,3) update ban_temp SET id_voie = fantoir from u where code_insee=u_insee and nom_voie=u_nom;
