@@ -11,7 +11,7 @@ SELECT '{\"id\": \"' || g.insee || (CASE WHEN min_cp!=cp.cp then '_'||cp.cp ELSE
 || ',\"x\": \"' || x_chf_lieu
 || '00\",\"y\": \"' || y_chf_lieu
 || '00\",\"city\": \"' || g.nom
-|| '\",\"context\": \"' || case when g.insee LIKE '97%' then left(g.insee,3) else left(g.insee,2) end || ', ' || case when (dr.nom_dep=g.nom or dr.nom_dep=dr.nom_reg) then case when dr.nom_reg=dr.nom_reg2016 then dr.nom_reg2016 else format('%s (%s)', dr.nom_reg2016, dr.nom_reg) end else dr.nom_dep || ', ' || case when dr.nom_reg=dr.nom_reg2016 then dr.nom_reg2016 else format('%s (%s)', dr.nom_reg2016, dr.nom_reg) end end
+|| '\",\"context\": \"' || case when g.insee LIKE '97%' then left(g.insee,3) else left(g.insee,2) end || ', ' || case when (dr.nom_dep=g.nom or dr.nom_dep=dr.nom_reg) then case when dr.nom_reg=dr.nom_reg2016 then dr.nom_reg2016 else format('%s (%s)', dr.nom_reg2016, dr.nom_reg) end else dr.nom_dep || ', ' || case when upper(unaccent(replace(dr.nom_reg,'-',' ')))=upper(unaccent(replace(dr.nom_reg2016,'-',' '))) then dr.nom_reg2016 else format('%s (%s)', dr.nom_reg2016, dr.nom_reg) end end
 || '\", \"population\": ' || population
 || ', \"adm_weight\": ' || CASE WHEN statut LIKE 'Capital%' THEN 6 WHEN statut = 'Préfecture de régi' THEN 5 WHEN statut='Préfecture' THEN 4 WHEN statut LIKE 'Sous-pr%' THEN 3 WHEN statut='Chef-lieu canton' THEN 2 ELSE 1 END
 || ', \"importance\": ' || greatest(0.075,round(log((CASE WHEN statut LIKE 'Capital%' THEN 6 WHEN statut = 'Préfecture de régi' THEN 5 WHEN statut='Préfecture' THEN 4 WHEN statut LIKE 'Sous-pr%' THEN 3 WHEN statut='Chef-lieu canton' THEN 2 ELSE 1 END)+log(population+1)/3),4))
@@ -61,7 +61,7 @@ round(avg(x::numeric),6) as x,
 round(avg(y::numeric),6) as y,
 regexp_replace(max(nom_commune),' [0-9].*','') as nom_commune,
 max(dr.nom_dep) as nom_dep,
-max(case when dr.nom_reg=dr.nom_reg2016 then dr.nom_reg2016 else format('%s (%s)', dr.nom_reg2016, dr.nom_reg) end) as nom_reg,
+max(case when upper(unaccent(replace(dr.nom_reg,'-',' ')))=upper(unaccent(replace(dr.nom_reg2016,'-',' '))) then dr.nom_reg2016 else format('%s (%s)', dr.nom_reg2016, dr.nom_reg) end) as nom_reg,
 max(case when coalesce(id_voie,id_ld,id_fantoir) > '9999' then 'locality' else 'street' end) as type,
 round(log((CASE WHEN (code_post LIKE '75%' OR max(g.statut) LIKE 'Capital%') THEN 6 WHEN (code_post LIKE '690%' OR code_post LIKE '130%' OR max(g.statut) = 'Préfecture de régi') THEN 5 WHEN max(g.statut)='Préfecture' THEN 4 WHEN max(g.statut) LIKE 'Sous-pr%' THEN 3 WHEN max(g.statut)='Chef-lieu canton' THEN 2 ELSE 1 END)+log(max(g.population)+1)/3)::numeric*log(1+log(count(b.*)+1)+log(CASE WHEN max(nom_voie) like 'Boulevard%' THEN 4 WHEN max(nom_voie) LIKE 'Place%' THEN 4 WHEN max(nom_voie) LIKE 'Espl%' THEN 4 WHEN max(nom_voie) LIKE 'Av%' THEN 3 WHEN max(nom_voie) LIKE 'Rue %' THEN 2 ELSE 1 END))::numeric,4)::text as importance,
 string_agg(format('\"%s\":{\"lat\":%s,\"lon\":%s,\"id\":\"%s\",\"x\":%s,\"y\":%s}',trim(numero||' '||rep),round(lon::numeric,6)::text,round(lat::numeric,6)::text,id,x,y),',' order by numero||rep,id) as housenumbers,
