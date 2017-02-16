@@ -8,9 +8,9 @@ SELECT '{\"id\": \"' || g.insee || (CASE WHEN min_cp!=cp.cp then '_'||cp.cp ELSE
 || '\",\"citycode\": \"' || g.insee
 || '\",\"lon\": ' || round(case when g.insee like '97%' or x_chf_lieu is null then ST_X(ST_Transform(ST_PointOnSurface(wkb_geometry),4326))::numeric else st_x(st_transform(st_setsrid(ST_Point(x_chf_lieu*100,y_chf_lieu*100),2154),4326))::numeric END,6)
 || ',\"lat\": ' || round(case when g.insee like '97%' or x_chf_lieu is null then ST_Y(ST_Transform(ST_PointOnSurface(wkb_geometry),4326))::numeric else st_y(st_transform(st_setsrid(ST_Point(x_chf_lieu*100,y_chf_lieu*100),2154),4326))::numeric END,6)
-|| ',\"x\": \"' || x_chf_lieu
-|| '00\",\"y\": \"' || y_chf_lieu
-|| '00\",\"city\": \"' || g.nom
+|| ',\"x\":' || x_chf_lieu
+|| '00,\"y\":' || y_chf_lieu
+|| '00,\"city\": \"' || g.nom
 || '\",\"context\": \"' || case when g.insee LIKE '97%' then left(g.insee,3) else left(g.insee,2) end || ', ' || case when (dr.nom_dep=g.nom or dr.nom_dep=dr.nom_reg) then case when dr.nom_reg=dr.nom_reg2016 then dr.nom_reg2016 else format('%s (%s)', dr.nom_reg2016, dr.nom_reg) end else dr.nom_dep || ', ' || case when upper(unaccent(replace(dr.nom_reg,'-',' ')))=upper(unaccent(replace(dr.nom_reg2016,'-',' '))) then dr.nom_reg2016 else format('%s (%s)', dr.nom_reg2016, dr.nom_reg) end end
 || '\", \"population\": ' || population
 || ', \"adm_weight\": ' || CASE WHEN statut LIKE 'Capital%' THEN 6 WHEN statut = 'Préfecture de régi' THEN 5 WHEN statut='Préfecture' THEN 4 WHEN statut LIKE 'Sous-pr%' THEN 3 WHEN statut='Chef-lieu canton' THEN 2 ELSE 1 END
