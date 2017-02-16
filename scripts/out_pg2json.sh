@@ -39,6 +39,8 @@ select format('{\"id\":\"%s_%s\",\"type\":\"%s\",\"name\":\"%s\" %s,\"postcode\"
   code_insee,
   lat,
   lon,
+  x,
+  y,
   nom_commune,
   case when code_insee LIKE '97%' then left(code_insee,3) else left(code_insee,2) end || ', ' || case when (nom_dep=nom_commune or nom_dep=nom_reg) then nom_reg else nom_dep || ', ' || nom_reg end,
   importance,
