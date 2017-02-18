@@ -1,4 +1,8 @@
 
+# mise à jour liste des abréviations
+psql -c "CREATE TABLE IF NOT EXISTS abbrev (txt_long text, tct_court text); TRUNCATE TABLE abbrev;"
+psql -c "\COPY abbrev FROM ../data/abbreviations.csv WITH (format csv, header true);"
+
 # suppression des mot doublés
 psql -c "UPDATE libelles SET court=regexp_replace(court,' ([A-Z0-9]+) \1 ',' \1 ','g') WHERE court ~ ' ([A-Z0-9]+) \1 ';"
 
