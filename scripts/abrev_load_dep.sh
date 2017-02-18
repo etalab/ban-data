@@ -10,3 +10,6 @@ insert into libelles (select nom_ld as long, null as court from ban_group_$1 lef
 --
 update libelles set court=regexp_replace(regexp_replace(long,'[^A-Z 0-9]',' ','g'),' +',' ','g') where court is null;
 "
+
+# on lance la mise à jour
+sh abrev_update.sh
