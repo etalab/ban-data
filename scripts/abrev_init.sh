@@ -5,7 +5,7 @@ drop table if exists libelles;
 create table libelles (long text, court text);
 create index libelles_long on libelles (long);
 create index libelles_court on libelles (court);
-create index libelles_court_trgm on libelles using gist (court gist_trgm_ops);
+create index libelles_court_trgm on libelles using gist (court gist_trgm_ops) where status is null;
 
 -- libelles FANTOIR
 insert into libelles (select lib_court as long, regexp_replace(regexp_replace(lib_court,'[^A-Z 0-9]',' ','g'),' +',' ','g') as court from dgfip_fantoir group by 1,2);
