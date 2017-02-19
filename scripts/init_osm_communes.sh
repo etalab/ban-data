@@ -5,8 +5,9 @@ cd ../data/osm/
 # détail communes (2014)
 wget -nc http://osm13.openstreetmap.fr/~cquest/openfla/export/communes-plus-20140630-100m-shp.zip
 unzip -u -o communes-plus-20140630-100m-shp.zip
-ogr2ogr -t_srs EPSG:4326 -f PostgreSQL PG: communes-plus-20140630-100m-shp/communes-plus-20140630-100m.shp -overwrite -nlt GEOMETRY -nln osm_communes -skipfailures
+ogr2ogr -t_srs EPSG:4326 -f PostgreSQL PG: communes-plus-20140630-100m-shp/communes-plus-20140630-100m.shp -overwrite -nlt GEOMETRY -nln osm_communes -skipfailures -lco COLUMN_TYPES=surf_m2=float
 psql -c "
+alter table osm_communes drop ogc_fid;
 create index osm_communes_index on osm_communes using gist(wkb_geometry);
 create index osm_communes_insee on osm_communes (insee);
 "
@@ -14,7 +15,7 @@ create index osm_communes_insee on osm_communes (insee);
 # limites communes au 1/1/2015
 wget -nc http://osm13.openstreetmap.fr/~cquest/openfla/export/communes-20150101-5m-shp.zip
 unzip -u -o communes-20150101-5m-shp.zip
-ogr2ogr -t_srs EPSG:4326 -f PostgreSQL PG: communes-plus-20150101-5m-shp/communes-plus-20150101-5m.shp -overwrite -nlt GEOMETRY -nln osm_communes_2015 -skipfailures
+ogr2ogr -t_srs EPSG:4326 -f PostgreSQL PG: communes-20150101-5m.shp -overwrite -nlt GEOMETRY -nln osm_communes_2015 -skipfailures -lco COLUMN_TYPES=surf_m2=float
 psql -c "
 alter table osm_communes_2015 drop ogc_fid;
 create index osm_communes_2015_index on osm_communes_2015 using gist(wkb_geometry);
@@ -27,21 +28,17 @@ unzip -u -o communes-20160119-shp.zip
 ogr2ogr -t_srs EPSG:4326 -f PostgreSQL PG: communes-20160119.shp -overwrite -nlt GEOMETRY -nln osm_communes_2016 -skipfailures
 psql -c "
 -- nettoyage après import ogr2ogr
-alter table osm_communes_2016 drop ogc_fid;
-create index osm_communes_2016_insee on osm_communes_2016 (insee);
+ALTER TABLE osm_communes_2016 drop ogc_fid;
+CREATE INDEX osm_communes_2016_insee on osm_communes_2016 (insee);
 -- vue pour les fusions 2016
-create materialized view fusion2016 as SELECT f.insee,                                                                                                                                         f.nom AS cheflieu,
-    co.insee AS insee_delegue,
-    co.nom AS nom_delegue,
-    2016 AS annee,
-    co.wkb_geometry AS geom
-   FROM osm_communes_2015 co
-     LEFT JOIN osm_communes_2016 cn ON co.insee::text = cn.insee::text AND upper(unaccent(replace(co.nom::text, '-'::text, ' '::text))) = upper(unaccent(replace(cn.nom::text, '-'::text, ' '::text)))
-     LEFT JOIN osm_communes_2016 f ON st_intersects(st_centroid(co.wkb_geometry), f.wkb_geometry)
-  WHERE cn.insee IS NULL AND (f.insee::text <> ALL (ARRAY['75056'::character varying, '13055'::character varying, '69123'::character varying]::text[]));
+CREATE MATERIALIZED VIEW fusion2016 as
+  SELECT n.insee, n.nom as cheflieu, o.insee as insee_delegue, o.nom as nom_delegue, '2016'::text as annee, o.wkb_geometry as geom
+    FROM (SELECT o.* FROM osm_communes_2015 o LEFT JOIN osm_communes_2016 n on (n.insee=o.insee) WHERE n.insee is null or n.nom != o.nom) as o
+    LEFT JOIN osm_communes_2016 n on (n.wkb_geometry && o.wkb_geometry and st_contains(n.wkb_geometry,st_pointonsurface(o.wkb_geometry)))
+    WHERE n.insee NOT IN ('13055','69123','75056');
 -- index sur la vue matérialisée
-create index fusion2016_insee on fusion2016 (insee);
-create index fusion2016_geom on fusion2016 using gist(geom);
+CREATE INDEX fusion2016_insee on fusion2016 (insee);
+CREATE INDEX fusion2016_geom on fusion2016 using gist(geom);
 "
 
 # limites communes au 1/1/2017 pour les fusions
@@ -50,21 +47,17 @@ unzip -u -o communes-20170111-shp.zip
 ogr2ogr -t_srs EPSG:4326 -f PostgreSQL PG: communes-20170112.shp -overwrite -nlt GEOMETRY -nln osm_communes_2017 -skipfailures
 psql -c "
 -- nettoyage après import ogr2ogr
-alter table osm_communes_2017 drop ogc_fid;
-create index osm_communes_2017_insee on osm_communes_2017 (insee);
+ALTER TABLE osm_communes_2017 drop ogc_fid;
+CREATE INDEX osm_communes_2017_insee on osm_communes_2017 (insee);
 -- vue pour les fusions 2017
-create materialized view fusion2017 as  SELECT f.insee,                                                                                                                                        f.nom AS cheflieu,
-    co.insee AS insee_delegue,
-    co.nom AS nom_delegue,
-    2017 AS annee,
-    co.wkb_geometry AS geom
-   FROM osm_communes_2016 co
-     LEFT JOIN osm_communes_2017 cn ON co.insee::text = cn.insee::text AND upper(unaccent(replace(co.nom::text, '-'::text, ' '::text))) = upper(unaccent(replace(cn.nom::text, '-'::text, ' '::text)))
-     LEFT JOIN osm_communes_2017 f ON st_intersects(st_centroid(co.wkb_geometry), f.wkb_geometry)
-  WHERE cn.insee IS NULL AND (f.insee::text <> ALL (ARRAY['75056'::character varying, '13055'::character varying, '69123'::character varying]::text[]));
+CREATE MATERIALIZED VIEW fusion2017 as
+  SELECT n.insee, n.nom as cheflieu, o.insee as insee_delegue, o.nom as nom_delegue, '2017'::text as annee, o.wkb_geometry as geom
+    FROM (SELECT o.* FROM osm_communes_2016 o LEFT JOIN osm_communes_2017 n on (n.insee=o.insee) WHERE n.insee is null or n.nom != o.nom) as o
+    LEFT JOIN osm_communes_2017 n on (n.wkb_geometry && o.wkb_geometry and st_contains(n.wkb_geometry,st_pointonsurface(o.wkb_geometry)))
+    WHERE n.insee NOT IN ('13055','69123','75056');
 -- index sur la vue matérialisée
-create index fusion2017_insee on fusion2017 (insee);
-create index fusion2017_geom on fusion2017 using gist(geom);
+CREATE INDEX fusion2017_insee on fusion2017 (insee);
+CREATE INDEX fusion2017_geom on fusion2017 using gist(geom);
 "
 
 # liste des régions 2016 (noms finaux)
