@@ -46,6 +46,10 @@ with u as (select b.id as u_id, libelle_voie as u_nom from ban_$DEP b join dgfip
 
 "
 
+# mise à jour des libellés (nom_voie / nom_ld > court)
+echo "`date +%H:%M:%S` Mise à jour libellés longs>courts $DEP"
+sh abrev_load_dep.sh $DEP
+
 echo "`date +%H:%M:%S` Harmonisation dept $DEP"
 sed "s/ban_temp/ban_$DEP/g;s/!dep!/$DEP/g" clean.sql > $TEMPDIR/clean_$DEP.sql
 psql -q < $TEMPDIR/clean_$DEP.sql
