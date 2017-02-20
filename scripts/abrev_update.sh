@@ -3,7 +3,7 @@
 psql -c "UPDATE libelles SET court=regexp_replace(court,' ([A-Z0-9]+) \1 ',' \1 ','g') WHERE status is null and court ~ ' ([A-Z0-9]+) \1 ';"
 
 # génération et exécution de requêtes UPDATE
-psql -Atc "select format(E'UPDATE libelles SET court=regexp_replace(court,\'%s\',\'%s\') WHERE status is null and court ~ \'%s \';', '(^| )'||txt_long||' ', '\1'||txt_court||' ',txt_long) from abbrev WHERE txt_long!=txt_court order by length(txt_long) desc;" | psql
+psql -Atc "select format(E'UPDATE libelles SET court=regexp_replace(court,\'%s\',\'%s\') WHERE status is null and court ~ \'%s \';', '(^| )'||txt_long||' ', '\1'||txt_court||' ',txt_long) from abbrev WHERE txt_long!=txt_court order by length(txt_long) desc;" | psql -q
 
 # suppression des articles
 psql -c "UPDATE libelles SET court=regexp_replace(court,' (DE|DU|DE LA|DE L|D|L|DES|AU|AUX|A|ET|DIT|DITE|EN) ',' ','g') WHERE status is null and court ~ ' (DE|DU|DE LA|DE L|D|L|DES|AU|AUX|A|ET|DIT|DITE|EN) ';"
