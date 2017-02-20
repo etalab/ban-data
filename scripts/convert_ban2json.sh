@@ -35,23 +35,33 @@ CREATE TABLE ban_group_$DEP AS SELECT code_insee, code_post, nom_commune, nom_vo
 echo "`date +%H:%M:%S` Indexation dept $DEP"
 psql -qc "
 -- création des index
+alter table ban_$DEP add id_voie text;
+alter table ban_$DEP add id_ld text;
+
 create index ban_id_$DEP on ban_$DEP using spgist(id);
 create index ban_insee_$DEP on ban_$DEP using spgist(code_insee);
 create index ban_group_insee_$DEP on ban_group_$DEP using spgist(code_insee);
+create index ban_voie_vide_$DEP on ban_$DEP (id) where id_voie is null and nom_voie!='';
+create index ban_ld_vide_$DEP on ban_$DEP (id) where id_ld is null and nom_ld !='';
 -- index trigrams pour accélérer les regexp / LIKE
 create index ban_nom_voie_$DEP on ban_group_$DEP using  gist (nom_voie gist_trgm_ops);
 create index ban_nom_ld_$DEP on ban_group_$DEP using  gist (nom_ld gist_trgm_ops);
 
 -- nettoyage nom_ld qui contient un code FANTOIR (issue #99)
-with u as (select b.id as u_id, libelle_voie as u_nom from ban_$DEP b join dgfip_fantoir f on (b.code_insee=f.code_insee and f.id_voie=nom_ld) where nom_ld ~ '^.[0-9][0-9][0-9]$')
+with u as (select b.id as u_id, libelle_voie as u_nom from ban_group_$DEP b join dgfip_fantoir f on (b.code_insee=f.code_insee and f.id_voie=nom_ld) where nom_ld ~ '^[0-9A-Z][0-9][0-9][0-9]$')
   update ban_group_$DEP set nom_ld=u_nom from u where id=u_id;
 
 "
 
+echo "`date +%H:%M:%S` Mise à jour des libellés $DEP"
+sh abrev_load_dep.sh 49
+sh abrev_update.sh
+
 echo "`date +%H:%M:%S` Harmonisation dept $DEP"
-sed "s/BAN_TEMP/ban_$DEP/g;s/ban_temp/ban_group_$DEP/g;s/!dep!/$DEP/g" clean.sql > $TEMPDIR/clean_$DEP.sql
-psql -q < $TEMPDIR/clean_$DEP.sql
-# rm $TEMPDIR/clean_$DEP.sql
+sed "s/BAN_TEMP/ban_$DEP/g;s/ban_temp/ban_group_$DEP/g;s/\!dep\!/$DEP/g" clean.sql > clean_$DEP.sql
+
+psql -q < clean_$DEP.sql
+# rm clean_$DEP.sql
 
 exit
 
