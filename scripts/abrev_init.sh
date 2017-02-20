@@ -2,7 +2,7 @@
 
 psql -c "
 drop table if exists libelles;
-create table libelles (long text, court text);
+create table libelles (long text, court text, status text);
 create index libelles_long on libelles (long);
 create index libelles_court on libelles (court);
 create index libelles_court_trgm on libelles using gist (court gist_trgm_ops) where status is null;
@@ -18,3 +18,5 @@ psql -c "\copy abbrev from ../data/abbreviations.csv WITH (FORMAT CSV, HEADER TR
 
 # on lance la mise à jour pour FANTOIR
 sh abrev_update.sh
+
+psql -c "UPDATE libelles set status='ok' where status is null;"
