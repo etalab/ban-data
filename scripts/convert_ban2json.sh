@@ -66,9 +66,7 @@ echo "`date +%H:%M:%S` Harmonisation dept $DEP"
 sed "s/BAN_TEMP/ban_$DEP/g;s/ban_temp/ban_group_$DEP/g;s/\!dep\!/$DEP/g" clean.sql > clean_$DEP.sql
 
 psql -q < clean_$DEP.sql > /dev/null
-# rm clean_$DEP.sql
-
-exit
+rm clean_$DEP.sql
 
 echo "`date +%H:%M:%S` Export JSON dept $DEP"
 sh out_pg2json.sh $DEP > ../out/ban-odbl-$DEP.json
