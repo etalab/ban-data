@@ -12,4 +12,3 @@ echo "`date +%H:%M:%S` Compression fichier global"
 gzip -9 ban-odbl.json
 
 echo "`date +%H:%M:%S` fin de traitement"
-
