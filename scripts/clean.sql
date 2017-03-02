@@ -277,9 +277,9 @@ update BAN_TEMP set geom = st_setsrid(st_makepoint(lat,lon),4326);
 
 -- recherche des codes INSEE dans communes déléguées (via intersection géométrique)
 alter table BAN_TEMP add insee_2016 text; -- tableau des anciens codes INSEE
-update BAN_TEMP b set insee_2016 = f.insee from  fusion2017 f where ST_contains(f.geom, b.geom);
+update BAN_TEMP b set insee_2016 = f.insee_delegue from  fusion2017 f where f.insee = b.code_insee and ST_contains(f.geom, b.geom);
 alter table BAN_TEMP add insee_2015 text; -- tableau des anciens codes INSEE
-update BAN_TEMP b set insee_2015 = f.insee from  fusion2016 f where ST_contains(f.geom, b.geom);
+update BAN_TEMP b set insee_2015 = f.insee_delegue from  fusion2016 f where f.insee = b.code_insee and ST_contains(f.geom, b.geom);
 
 \! echo "nom fusions"
 
