@@ -30,6 +30,10 @@ echo "`date +%H:%M:%S` Normalisation voies/ld dept $DEP"
 psql -qc "
 DROP TABLE IF EXISTS ban_group_$DEP;
 CREATE TABLE ban_group_$DEP AS SELECT code_insee, code_post, nom_commune, nom_voie, nom_ld, alias, id_fantoir, null as nom_temp, null as ld_temp, null as id_voie, null as id_ld, to_hex(nextval('ban_id')) as id, array_agg(id) as ids FROM ban_$DEP GROUP BY 1,2,3,4,5,6,7,8,9,10,11;
+UPDATE ban_group_$DEP SET nom_voie = '' WHERE nom_voie IS NULL;
+UPDATE ban_group_$DEP SET nom_ld = '' WHERE nom_ld IS NULL;
+UPDATE ban_group_$DEP SET alias = '' WHERE alias IS NULL;
+UPDATE ban_group_$DEP SET id_fantoir = '' WHERE id_fantoir IS NULL;
 "
 
 echo "`date +%H:%M:%S` Indexation dept $DEP"
