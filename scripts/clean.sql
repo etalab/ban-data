@@ -329,3 +329,5 @@ WITH u as (SELECT b.id as u_id, f.fantoir FROM (select unnest(ids) as id, upper(
 
 -- on reporte les noms remis en forme et les id FANTOIR sur les adresses
 with u as (select unnest(ids) as adr_id, nom_voie as u_nom_voie, nom_ld as u_nom_ld, alias as u_alias, id_voie as u_id_voie, id_ld as u_id_ld from ban_temp) update BAN_TEMP set nom_voie=u_nom_voie,nom_ld=u_nom_ld,alias=u_alias,id_voie=u_id_voie,id_ld=u_id_ld from u where id=adr_id;
+
+UPDATE BAN_TEMP SET nom_voie = regexp_replace(nom_voie,' \(.*\)',''), nom_ld = regexp_replace(nom_ld,' \(.*\)','') WHERE nom_fusion is not null;
