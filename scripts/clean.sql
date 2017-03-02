@@ -325,3 +325,7 @@ WITH u as (SELECT b.id as u_id, f.fantoir FROM (select unnest(ids) as id, upper(
 
 -- recherche du code FANTOIR correspondant au lieu-dit et stockage dans id_ld (communes fusionnées en 2016)
 WITH u as (SELECT b.id as u_id, f.fantoir FROM (select unnest(ids) as id, upper(unaccent(nom_ld)) as nom from ban_temp b join fusion2016 f on (f.insee=b.code_insee) where id_ld is null and nom_ld !='' group by 1,2) as l left join libelles_join lc on (lc.long=l.nom) JOIN BAN_TEMP b ON (b.id=l.id and b.id_ld is null) left join dgfip_fantoir f on (f.lib_court=lc.long2 and f.code_insee=b.insee_2015) GROUP BY 1,2) UPDATE BAN_TEMP SET id_ld=fantoir FROM u WHERE id=u_id and fantoir is not null;
+
+
+-- on reporte les noms remis en forme et les id FANTOIR sur les adresses
+with u as (select unnest(ids) as adr_id, nom_voie as u_nom_voie, nom_ld as u_nom_ld, alias as u_alias, id_voie as u_id_voie, id_ld as u_id_ld from ban_temp) update BAN_TEMP set nom_voie=u_nom_voie,nom_ld=u_nom_ld,alias=u_alias,id_voie=u_id_voie,id_ld=u_id_ld from u where id=adr_id;
