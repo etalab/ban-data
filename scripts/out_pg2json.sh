@@ -35,7 +35,7 @@ select format('{\"id\":\"%s\",\"type\":\"%s\",\"name\":%s %s,\"postcode\":\"%s\"
   to_json(case when nom_voie='' then nom_commune when ancienne_commune='' then nom_voie else replace(nom_voie,' '||ancienne_commune,'') || ' ' || ancienne_commune end)::text,
   case when alias !='' then format(',\"alias\":%s', to_json(alias)::text) else '' end,
   code_post,
-  format('[%s]', to_json(code_insee)::text || case when insee_2016 is not null and insee_2016!=code_insee then ','||to_json(insee_2016)::text else '' end || case when insee_2015 is not null and insee_2015 != insee_2016 then ','||to_json(insee_2015)::text else '' end),
+  format('[%s]', to_json(code_insee)::text || case when insee_2016 is not null and insee_2016!=code_insee then ','||to_json(insee_2016)::text else '' end || case when insee_2015 is not null and insee_2015 != insee_2016 then ','||to_json(insee_2015)::text else '' end || case when code_post like '75%' then ',"75056"' else '' end || case when code_post like '690%' then ',"69123"' else '' end || case when code_post like '130%' then ',"13055"' else '' end),
   lat,
   lon,
   x,
