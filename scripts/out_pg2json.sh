@@ -29,8 +29,7 @@ ORDER BY g.insee, cp.cp;
 
 # adresses regroupées par voie/lieu-dit/CP
 psql --no-align --tuples-only -P pager -qc "
-select format('{\"id\":\"%s_%s\",\"type\":\"%s\",\"name\":%s %s,\"postcode\":\"%s\",\"citycode\": %s,\"lon\":%s,\"lat\": %s,\"x\":%s,\"y\":%s,\"city\":\"%s\",\"context\":\"%s\",\"importance\":%s,\"housenumbers\":{%s}}',
-  code_insee,
+select format('{\"id\":\"%s\",\"type\":\"%s\",\"name\":%s %s,\"postcode\":\"%s\",\"citycode\": %s,\"lon\":%s,\"lat\": %s,\"x\":%s,\"y\":%s,\"city\":\"%s\",\"context\":\"%s\",\"importance\":%s,\"housenumbers\":{%s}}',
   fantoir,
   type,
   to_json(case when nom_voie='' then nom_commune when ancienne_commune='' then nom_voie else replace(nom_voie,' '||ancienne_commune,'') || ' ' || ancienne_commune end)::text,
@@ -47,12 +46,13 @@ select format('{\"id\":\"%s_%s\",\"type\":\"%s\",\"name\":%s %s,\"postcode\":\"%
   housenumbers)
 from
 (select code_insee,
-(case when id_ld is not null AND coalesce(id_voie,'')!=coalesce(id_ld,'') then coalesce(id_voie,'')||id_ld
-when coalesce(id_voie,'')!='' and nom_ld='' then coalesce(id_voie,'')
-when id_ld is not null then id_ld
-when coalesce(id_voie,'')!='' and nom_ld!='' then coalesce(id_voie,'')
-else
-'XXXX' end) || '_' || left(md5(format('n=%s,l=%s,a=%s,p=%s',unaccent(nom_voie),nom_ld,alias,code_post)),6) as fantoir,
+
+(case when id_ld is not null AND id_voie is not null AND id_voie!=id_ld then left(id_voie,10)||substr(id_ld,7,4)
+when id_voie is not null and id_ld is null then left(id_voie,10)
+when id_voie is null and id_ld is not null then left(id_ld,10)
+else code_insee||'_XXXX' end)
+ || '_' || left(md5(format('n=%s,l=%s,a=%s,p=%s',unaccent(nom_voie),nom_ld,alias,code_post)),6) as fantoir,
+
 replace(case when (coalesce(max(nom_voie),'') !='' and coalesce(max(nom_ld),'') !='' and replace(upper(unaccent(coalesce(max(nom_voie),''))),'-',' ')!=replace(upper(unaccent(coalesce(max(nom_ld),''))),'-',' ')) then (coalesce(max(nom_voie),'')||', '||coalesce(max(nom_ld),'')) when (coalesce(max(nom_voie),'')='') then max(nom_ld) else max(nom_voie) end,'\"','') as  nom_voie,
 code_post,
 round(avg(lat::numeric),6) as lat,
