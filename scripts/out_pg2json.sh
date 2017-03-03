@@ -5,8 +5,8 @@ psql -t -P pager -A -c "
 SELECT '{\"id\": \"' || g.insee || (CASE WHEN min_cp!=cp.cp then '_'||cp.cp ELSE '' END)
 || '\",\"type\": \"municipality\",\"name\": \"' || g.nom
 || '\",\"postcode\": \"' || cp.cp
-|| '\",\"citycode\": \"' || g.insee
-|| '\",\"lon\": ' || round(case when g.insee like '97%' or x_chf_lieu is null then ST_X(ST_Transform(ST_PointOnSurface(wkb_geometry),4326))::numeric else st_x(st_transform(st_setsrid(ST_Point(x_chf_lieu*100,y_chf_lieu*100),2154),4326))::numeric END,6)
+|| '\",\"citycode\": [\"' || g.insee
+|| '\"],\"lon\": ' || round(case when g.insee like '97%' or x_chf_lieu is null then ST_X(ST_Transform(ST_PointOnSurface(wkb_geometry),4326))::numeric else st_x(st_transform(st_setsrid(ST_Point(x_chf_lieu*100,y_chf_lieu*100),2154),4326))::numeric END,6)
 || ',\"lat\": ' || round(case when g.insee like '97%' or x_chf_lieu is null then ST_Y(ST_Transform(ST_PointOnSurface(wkb_geometry),4326))::numeric else st_y(st_transform(st_setsrid(ST_Point(x_chf_lieu*100,y_chf_lieu*100),2154),4326))::numeric END,6)
 || ',\"x\":' || x_chf_lieu
 || '00,\"y\":' || y_chf_lieu
