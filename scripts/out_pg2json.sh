@@ -63,7 +63,7 @@ string_agg(format('\"%s\":{\"lat\":%s,\"lon\":%s,\"id\":\"%s\",\"x\":%s,\"y\":%s
 max(case when nom_fusion is not null then format('(%s)',nom_fusion) else '' end) as ancienne_commune, alias, insee_2016, insee_2015
 from ban_$1 b
 join osm_communes g on (g.insee=code_insee)
-join cog_context cc on (cc.insee = case when code_insee LIKE '97%' then left(code_insee,3) else left(code_insee,2) end)
+join cog_context cc on (cc.dep = case when code_insee LIKE '97%' then left(code_insee,3) else left(code_insee,2) end)
 where nom_voie||nom_ld!=''
 group by 1,2,4,alias, insee_2016, insee_2015
 order by 1,2,3) as d;
