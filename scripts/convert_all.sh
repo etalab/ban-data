@@ -19,6 +19,8 @@ parallel -j 6 sh out_odbl.sh {} ::: $DEPTS
 echo "`date +%H:%M:%S` Fusion des fichiers json"
 # fusion en un fichier unique
 truncate -s 0 ../out/ban-odbl.json
+cat ../out/ban-version.json >> ../out/ban-odbl.json
+cat ../data/PLM.json >> ../out/ban-odbl.json
 for dep in $DEPTS ; do
   grep -v '^$' "../out/ban-odbl-$dep.json" >> ../out/ban-odbl.json
 done
