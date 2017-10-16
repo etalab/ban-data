@@ -51,10 +51,10 @@ else code_insee||'_XXXX' end)
 
 replace(case when (coalesce(max(nom_voie),'') !='' and coalesce(max(nom_ld),'') !='' and replace(upper(unaccent(coalesce(max(nom_voie),''))),'-',' ')!=replace(upper(unaccent(coalesce(max(nom_ld),''))),'-',' ')) then (coalesce(max(nom_voie),'')||', '||coalesce(max(nom_ld),'')) when (coalesce(max(nom_voie),'')='') then max(nom_ld) else max(nom_voie) end,'\"','') as  nom_voie,
 code_post,
-round(avg(lat::numeric),6) as lat,
-round(avg(lon::numeric),6) as lon,
-round(avg(x::numeric),1) as x,
-round(avg(y::numeric),1) as y,
+round((select * from unnest(array_agg(point '('||lat::numeric||','||lon::numeric||')')) as t(p) order by point '('||avg(lat::numeric)||','||avg(lon::numeric)||')' <-> p limit 1)[0], 6) as lat, -- snap the average point on the closest one
+round((select * from unnest(array_agg(point '('||lat::numeric||','||lon::numeric||')')) as t(p) order by point '('||avg(lat::numeric)||','||avg(lon::numeric)||')' <-> p limit 1)[1], 6) as lon, -- snap the average point on the closest one
+round((select * from unnest(array_agg(point '('||x::numeric||','||y::numeric||')')) as t(p) order by point '('||avg(x::numeric)||','||avg(y::numeric)||')' <-> p limit 1)[0], 1) as x, -- snap the average point on the closest one
+round((select * from unnest(array_agg(point '('||x::numeric||','||y::numeric||')')) as t(p) order by point '('||avg(x::numeric)||','||avg(y::numeric)||')' <-> p limit 1)[1], 1) as y, -- snap the average point on the closest one
 regexp_replace(max(nom_commune),' [0-9].*','') as nom_commune,
 max(cc.contexte) as contexte,
 max(case when coalesce(id_voie,id_ld,id_fantoir) > '9999' then 'locality' else 'street' end) as type,
