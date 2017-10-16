@@ -9,6 +9,9 @@ update ban_temp set nom_ld=replace(nom_ld,'*NOBDUNI*','') where nom_ld like '*NO
 -- supression nom_ld si déjà contenu dans nom_voie
 update ban_temp set nom_ld='' where nom_ld !='' and lower(unaccent(nom_voie))~lower(unaccent(nom_ld)) and nom_ld not like '%(%';
 
+-- nom_voie: très long (plusieurs noms de voie concaténés voir issue#24)
+update ban_temp set nom_voie = regexp_replace(nom_voie,'/.*$','') where length(nom_voie)>80 and nom_voie ~ '/';
+
 -- nom_voie: "nom_voie contient / avec valeurs repetees"
 with u as (select id as u_id,regexp_replace(nom_voie,'^(.*)/\1$','\1') as u_nom from ban_temp where nom_voie ~ '^(.*)/\1$') update ban_temp set nom_voie=u_nom from u where id=u_id;
 
