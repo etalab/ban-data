@@ -6,22 +6,18 @@ SELECT '{\"id\": \"' || g.insee || (CASE WHEN min_cp!=cp.cp then '_'||cp.cp ELSE
 || '\",\"type\": \"municipality\",\"name\": \"' || g.nom
 || '\",\"postcode\": \"' || cp.cp
 || '\",\"citycode\": [\"' || g.insee
-|| '\"],\"lon\": ' || round(case when g.insee like '97%' or x_chf_lieu is null then ST_X(ST_Transform(ST_PointOnSurface(wkb_geometry),4326))::numeric else st_x(st_transform(st_setsrid(ST_Point(x_chf_lieu*100,y_chf_lieu*100),2154),4326))::numeric END,6)
-|| ',\"lat\": ' || round(case when g.insee like '97%' or x_chf_lieu is null then ST_Y(ST_Transform(ST_PointOnSurface(wkb_geometry),4326))::numeric else st_y(st_transform(st_setsrid(ST_Point(x_chf_lieu*100,y_chf_lieu*100),2154),4326))::numeric END,6)
-|| ',\"x\":' || x_chf_lieu
-|| '00,\"y\":' || y_chf_lieu
-|| '00,\"city\": \"' || g.nom
-|| '\",\"context\": \"' || case when g.insee LIKE '97%' then left(g.insee,3) else left(g.insee,2) end || ', ' || case when (dr.nom_dep=g.nom or dr.nom_dep=dr.nom_reg) then case when dr.nom_reg=dr.nom_reg2016 then dr.nom_reg2016 else format('%s (%s)', dr.nom_reg2016, dr.nom_reg) end else dr.nom_dep || ', ' || case when upper(unaccent(replace(dr.nom_reg,'-',' ')))=upper(unaccent(replace(dr.nom_reg2016,'-',' '))) then dr.nom_reg2016 else format('%s (%s)', dr.nom_reg2016, dr.nom_reg) end end
-|| '\", \"population\": ' || population
-|| ', \"adm_weight\": ' || CASE WHEN statut LIKE 'Capital%' THEN 6 WHEN statut = 'Préfecture de régi' THEN 5 WHEN statut='Préfecture' THEN 4 WHEN statut LIKE 'Sous-pr%' THEN 3 WHEN statut='Chef-lieu canton' THEN 2 ELSE 1 END
+|| '\"],\"lon\": ' || round(case when g.insee like '97%' or x_chf_lieu is null then ST_X(ST_Transform(ST_PointOnSurface(g.wkb_geometry),4326))::numeric else st_x(st_transform(st_setsrid(ST_Point(x_chf_lieu*100,y_chf_lieu*100),2154),4326))::numeric END,6)
+|| ',\"lat\": ' || round(case when g.insee like '97%' or x_chf_lieu is null then ST_Y(ST_Transform(ST_PointOnSurface(g.wkb_geometry),4326))::numeric else st_y(st_transform(st_setsrid(ST_Point(x_chf_lieu*100,y_chf_lieu*100),2154),4326))::numeric END,6)
+|| coalesce(',\"x\":' || x_chf_lieu||'00,\"y\":' || y_chf_lieu|| '00'|| ',\"population\": ' || population,'')
+|| ',\"city\": ' || to_json(g.nom)
+|| ',\"context\": ' || to_json(cc.contexte)
+|| ',\"adm_weight\": ' || CASE WHEN statut LIKE 'Capital%' THEN 6 WHEN statut = 'Préfecture de régi' THEN 5 WHEN statut='Préfecture' THEN 4 WHEN statut LIKE 'Sous-pr%' THEN 3 WHEN statut='Chef-lieu canton' THEN 2 ELSE 1 END
 || ', \"importance\": ' || greatest(0.075,round(log((CASE WHEN statut LIKE 'Capital%' THEN 6 WHEN statut = 'Préfecture de régi' THEN 5 WHEN statut='Préfecture' THEN 4 WHEN statut LIKE 'Sous-pr%' THEN 3 WHEN statut='Chef-lieu canton' THEN 2 ELSE 1 END)+log(population+1)/3),4))
 || '}'
-FROM osm_communes g
+FROM osm_communes_2017 g left join osm_communes o on (o.insee=g.insee)
 join poste_cp cp on (cp.insee=g.insee)
 join (select insee, min(cp) as min_cp from poste_cp group by 1) as cp2 on (cp2.insee=g.insee)
-join cog_dep d on (d.dep=left(g.insee,2) or d.dep=left(g.insee,3))
-join cog_reg r on (r.reg=d.reg)
-join dep_reg_2016 dr on (dr.dep=d.dep)
+join cog_context cc on (cc.dep = case when g.insee > '97' then left(g.insee,3) else left(g.insee,2) end)
 WHERE g.insee like '$1%'
 GROUP BY 1,g.insee, cp.cp
 ORDER BY g.insee, cp.cp;
