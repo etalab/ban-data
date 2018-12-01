@@ -296,9 +296,23 @@ update BAN_TEMP set nom_voie = trim(regexp_replace(nom_voie,'\(.*','')) where no
 -- on sépare les anciens noms entre parenthèse du nom_ld
 update BAN_TEMP set nom_ld = trim(regexp_replace(nom_ld,'\(.*','')) where nom_ld ~ '\(';
 -- on complète nom_fusion avec le nom de l'ancienne commune si il n'est pas déjà présent
-with u as (select id as u_id, coalesce(nom_fusion||', ','')||nom_delegue as nom_2016 from BAN_TEMP b join fusion2016 f on (f.insee=b.code_insee and ST_Contains(f.geom, b.geom) and replace(upper(unaccent(coalesce(b.nom_fusion,''))),'-',' ') !~ replace(upper(unaccent(f.nom_delegue)),'-',' '))) update BAN_TEMP set nom_fusion=nom_2016 from u where id=u_id;
+with u as (select id as u_id, coalesce(nom_fusion||', ','')||nom_delegue as nom_2016
+  from BAN_TEMP b join fusion2016 f on (f.insee=b.code_insee and ST_Contains(f.geom, b.geom)
+    and replace(upper(unaccent(coalesce(b.nom_fusion,''))),'-',' ') !~ replace(upper(unaccent(f.nom_delegue)),'-',' ')))
+  update BAN_TEMP set nom_fusion=nom_2016 from u where id=u_id;
+
 -- pareil pour les fusions de 2017
-with u as (select id as u_id, coalesce(nom_fusion||', ','')||nom_delegue as nom_2017 from BAN_TEMP b join fusion2017 f on (f.insee=b.code_insee and ST_Contains(f.geom, b.geom) and replace(upper(unaccent(coalesce(b.nom_fusion,''))),'-',' ') !~ replace(upper(unaccent(f.nom_delegue)),'-',' '))) update BAN_TEMP set nom_fusion=nom_2017 from u where id=u_id;
+with u as (select id as u_id, coalesce(nom_fusion||', ','')||nom_delegue as nom_2017
+  from BAN_TEMP b join fusion2017 f on (f.insee=b.code_insee and ST_Contains(f.geom, b.geom)
+    and replace(upper(unaccent(coalesce(b.nom_fusion,''))),'-',' ') !~ replace(upper(unaccent(f.nom_delegue)),'-',' ')))
+  update BAN_TEMP set nom_fusion=nom_2017 from u where id=u_id;
+
+-- pareil pour les fusions de 2018
+with u as (select id as u_id, coalesce(nom_fusion||', ','')||nom_delegue as nom_2018
+  from BAN_TEMP b join fusion2018 f on (f.insee=b.code_insee and ST_Contains(f.geom, b.geom)
+    and replace(upper(unaccent(coalesce(b.nom_fusion,''))),'-',' ') !~ replace(upper(unaccent(f.nom_delegue)),'-',' ')))
+  update BAN_TEMP set nom_fusion=nom_2018 from u where id=u_id;
+
 
 \! echo "nettoyage/harmonisation des anciens noms de communes"
 
