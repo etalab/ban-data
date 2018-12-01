@@ -71,3 +71,23 @@ create index osm_regions_2016_insee on osm_regions_2016 (insee);
 
 create or replace view dep_reg_2016 as select d.*, nom_reg, d2.tncc as dep_tncc, r2.nom as nom_reg2016 from cog_dep d join cog_reg r on (r.reg=d.reg) join insee_depts_2016 d2 on (d2.dep=d.dep) left join osm_regions_2016 r2 on (r2.insee=d2.region);
 "
+
+
+# limites communes au 1/1/2018 pour les fusions
+wget -nc http://osm13.openstreetmap.fr/~cquest/openfla/export/communes-20180101-shp.zip
+unzip -u -o communes-20180101-shp.zip
+ogr2ogr -t_srs EPSG:4326 -f PostgreSQL PG: communes-20180101.shp -overwrite -nlt GEOMETRY -nln osm_communes_2018 -skipfailures
+psql -c "
+-- nettoyage après import ogr2ogr
+ALTER TABLE osm_communes_2018 drop ogc_fid;
+CREATE INDEX osm_communes_2018_insee on osm_communes_2018 (insee);
+-- vue pour les fusions 2018
+CREATE MATERIALIZED VIEW fusion2018 as
+  SELECT n.insee, n.nom as cheflieu, o.insee as insee_delegue, o.nom as nom_delegue, '2018'::text as annee, o.wkb_geometry as geom
+    FROM (SELECT o.* FROM osm_communes_2017 o LEFT JOIN osm_communes_2018 n on (n.insee=o.insee) WHERE n.insee is null or n.nom != o.nom) as o
+    LEFT JOIN osm_communes_2018 n on (n.wkb_geometry && o.wkb_geometry and st_contains(n.wkb_geometry,st_pointonsurface(o.wkb_geometry)))
+    WHERE n.insee NOT IN ('13055','69123','75056');
+-- index sur la vue matérialisée
+CREATE INDEX fusion2018_insee on fusion2018 (insee);
+CREATE INDEX fusion2018_geom on fusion2018 using gist(geom);
+
