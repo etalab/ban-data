@@ -9,9 +9,6 @@ update ban_temp set nom_ld=replace(nom_ld,'*NOBDUNI*','') where nom_ld like '*NO
 -- supression nom_ld si déjà contenu dans nom_voie
 update ban_temp set nom_ld='' where nom_ld !='' and lower(unaccent(nom_voie))~lower(unaccent(nom_ld)) and nom_ld not like '%(%';
 
--- nom_voie: très long (plusieurs noms de voie concaténés voir issue#24)
-update ban_temp set nom_voie = regexp_replace(nom_voie,'/.*$','') where length(nom_voie)>80 and nom_voie ~ '/';
-
 -- nom_voie: "nom_voie contient / avec valeurs repetees"
 with u as (select id as u_id,regexp_replace(nom_voie,'^(.*)/\1$','\1') as u_nom from ban_temp where nom_voie ~ '^(.*)/\1$') update ban_temp set nom_voie=u_nom from u where id=u_id;
 
@@ -170,6 +167,8 @@ update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Chene)( |$)','\1Chê
 update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Franche.Comte)( |$)','\1Franche-Comté\3') where nom_voie like '%Franche_Comte%';
 update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Francois)( |$)','\1François\3') where nom_voie like '%Francois%';
 update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Clémenceau)( |$)','\1Clemenceau\3') where nom_voie like '%Clémenceau%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(du Marche)( |$)','\1du Marche\3') where nom_voie like '%du Marche%';
+update ban_temp set nom_voie=regexp_replace(nom_voie,'(^| )(Ecole)( |$)','\1École\3') where nom_voie like '%Ecole%';
 
 -- Saint et Sainte avec tiret
 update ban_temp set nom_voie=replace(nom_voie,'Saint ','Saint-') where nom_voie ~ 'Saint ';
@@ -297,9 +296,23 @@ update BAN_TEMP set nom_voie = trim(regexp_replace(nom_voie,'\(.*','')) where no
 -- on sépare les anciens noms entre parenthèse du nom_ld
 update BAN_TEMP set nom_ld = trim(regexp_replace(nom_ld,'\(.*','')) where nom_ld ~ '\(';
 -- on complète nom_fusion avec le nom de l'ancienne commune si il n'est pas déjà présent
-with u as (select id as u_id, coalesce(nom_fusion||', ','')||nom_delegue as nom_2016 from BAN_TEMP b join fusion2016 f on (f.insee=b.code_insee and ST_Contains(f.geom, b.geom) and replace(upper(unaccent(coalesce(b.nom_fusion,''))),'-',' ') !~ replace(upper(unaccent(f.nom_delegue)),'-',' '))) update BAN_TEMP set nom_fusion=nom_2016 from u where id=u_id;
+with u as (select id as u_id, coalesce(nom_fusion||', ','')||nom_delegue as nom_2016
+  from BAN_TEMP b join fusion2016 f on (f.insee=b.code_insee and ST_Contains(f.geom, b.geom)
+    and replace(upper(unaccent(coalesce(b.nom_fusion,''))),'-',' ') !~ replace(upper(unaccent(f.nom_delegue)),'-',' ')))
+  update BAN_TEMP set nom_fusion=nom_2016 from u where id=u_id;
+
 -- pareil pour les fusions de 2017
-with u as (select id as u_id, coalesce(nom_fusion||', ','')||nom_delegue as nom_2017 from BAN_TEMP b join fusion2017 f on (f.insee=b.code_insee and ST_Contains(f.geom, b.geom) and replace(upper(unaccent(coalesce(b.nom_fusion,''))),'-',' ') !~ replace(upper(unaccent(f.nom_delegue)),'-',' '))) update BAN_TEMP set nom_fusion=nom_2017 from u where id=u_id;
+with u as (select id as u_id, coalesce(nom_fusion||', ','')||nom_delegue as nom_2017
+  from BAN_TEMP b join fusion2017 f on (f.insee=b.code_insee and ST_Contains(f.geom, b.geom)
+    and replace(upper(unaccent(coalesce(b.nom_fusion,''))),'-',' ') !~ replace(upper(unaccent(f.nom_delegue)),'-',' ')))
+  update BAN_TEMP set nom_fusion=nom_2017 from u where id=u_id;
+
+-- pareil pour les fusions de 2018
+with u as (select id as u_id, coalesce(nom_fusion||', ','')||nom_delegue as nom_2018
+  from BAN_TEMP b join fusion2018 f on (f.insee=b.code_insee and ST_Contains(f.geom, b.geom)
+    and replace(upper(unaccent(coalesce(b.nom_fusion,''))),'-',' ') !~ replace(upper(unaccent(f.nom_delegue)),'-',' ')))
+  update BAN_TEMP set nom_fusion=nom_2018 from u where id=u_id;
+
 
 \! echo "nettoyage/harmonisation des anciens noms de communes"
 
@@ -334,3 +347,6 @@ WITH u as (SELECT b.id as u_id, f.fantoir FROM (select unnest(ids) as id, upper(
 with u as (select unnest(ids) as adr_id, nom_voie as u_nom_voie, nom_ld as u_nom_ld, alias as u_alias, id_voie as u_id_voie, id_ld as u_id_ld from ban_temp) update BAN_TEMP set nom_voie=u_nom_voie,nom_ld=u_nom_ld,alias=u_alias,id_voie=u_id_voie,id_ld=u_id_ld from u where id=adr_id;
 
 UPDATE BAN_TEMP SET nom_voie = regexp_replace(nom_voie,' \(.*\)',''), nom_ld = regexp_replace(nom_ld,' \(.*\)','') WHERE nom_fusion is not null;
+
+-- désabréviation des alias
+with u as (select * from abbrev_alias) update ban_temp set alias = regexp_replace(alias,'^'||court||' ',long||' ') from u where alias ~ ('^'||court||' ');

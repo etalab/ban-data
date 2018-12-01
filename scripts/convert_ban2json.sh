@@ -9,19 +9,18 @@ DROP TABLE IF EXISTS BAN_$DEP;
 CREATE TABLE ban_$DEP () INHERITS (ban_full);
 "
 
-# unzip -qjn ../data/ign/livraison/$DEP/*odbl*_$DEP.zip -d ../data/ign/
-if file ../data/ign/*odbl*_"$DEP".csv | grep -q ISO
+if file ../data/ign/*_"$DEP".csv | grep -q ISO
 then
 	# conversion UTF8 si ISO en entrée
-	iconv -f WINDOWS-1252 -t UTF8 ../data/ign/*odbl*_$DEP.csv > temp_$DEP
-	rm -f ../data/ign/*odbl*_$DEP.csv
+	iconv -f WINDOWS-1252 -t UTF8 ../data/ign/*_$DEP.csv > temp_$DEP
+	rm -f ../data/ign/*_$DEP.csv
 	mv temp_$DEP ../data/ign/BAN_odbl_$DEP.csv
 fi
 
-grep "^ADR" ../data/ign/*odbl*_$DEP.csv | sort -u > $TEMPDIR/temp_$DEP
-psql -c "\copy ban_$DEP from '$TEMPDIR/temp_$DEP' with (format csv, delimiter ';', header false, NULL '');"
+csvcut  -d ';' -C nom_afnor ../data/ign/*_$DEP.csv | grep "^ADR" | sort -u > $TEMPDIR/temp_$DEP
+psql -c "\copy ban_$DEP from '$TEMPDIR/temp_$DEP' with (format csv, header false, NULL '');"
 # pas de libellé d'acheminement dans la version ODbL
-psql -c "UPDATE ban_$DEP SET libelle_acheminement='';"
+psql -c "UPDATE ban_$DEP SET libelle_acheminement=''; UPDATE ban_$DEP SET rep='' WHERE rep IS NULL;"
 rm $TEMPDIR/temp_$DEP
 
 
