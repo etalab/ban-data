@@ -28,7 +28,7 @@ psql --no-align --tuples-only -P pager -qc "
 select format('{\"id\":\"%s\",\"type\":\"%s\",\"name\":%s %s,\"postcode\":\"%s\",\"citycode\": %s,\"lon\":%s,\"lat\": %s,\"x\":%s,\"y\":%s,\"city\":\"%s\",\"context\":\"%s\",\"importance\":%s,\"housenumbers\":{%s}}',
   fantoir,
   type,
-  to_json(case when nom_voie='' then nom_commune when ancienne_commune='' then nom_voie else replace(nom_voie,' '||ancienne_commune,'') || ' ' || ancienne_commune end)::text,
+  format('[%s%s]',to_json(case when nom_voie='' then nom_commune when ancienne_commune='' then nom_voie else replace(nom_voie,' '||ancienne_commune,'') || ' ' || ancienne_commune end)::text, case when alias != '' then ','||to_json(alias) else '' end),
   case when alias !='' then format(',\"alias\":%s', to_json(alias)::text) else '' end,
   code_post,
   format('[%s]', to_json(code_insee)::text || case when insee_2016 is not null and insee_2016!=code_insee then ','||to_json(insee_2016)::text else '' end || case when insee_2015 is not null and insee_2015 != insee_2016 then ','||to_json(insee_2015)::text else '' end || case when code_post like '75%' then ',"75056"' else '' end || case when code_post like '690%' then ',"69123"' else '' end || case when code_post like '130%' then ',"13055"' else '' end),
@@ -62,8 +62,8 @@ round(log((CASE WHEN (code_post LIKE '75%' OR max(g.statut) LIKE 'Capital%') THE
 string_agg(format('\"%s\":{\"lat\":%s,\"lon\":%s,\"id\":\"%s\",\"x\":%s,\"y\":%s}',trim(numero||' '||rep),round(lon::numeric,6)::text,round(lat::numeric,6)::text,id,x,y),',' order by numero||rep,id) as housenumbers,
 max(case when nom_fusion is not null then format('(%s)',nom_fusion) else '' end) as ancienne_commune, alias, insee_2016, insee_2015
 from ban_$1 b
-join osm_communes g on (g.insee=code_insee)
-join cog_context cc on (cc.dep = case when code_insee LIKE '97%' then left(code_insee,3) else left(code_insee,2) end)
+  join osm_communes g on (g.insee=code_insee)
+  join cog_context cc on (cc.dep = case when code_insee LIKE '97%' then left(code_insee,3) else left(code_insee,2) end)
 where nom_voie||nom_ld!=''
 group by 1,2,4,alias, insee_2016, insee_2015
 order by 1,2,3) as d;
